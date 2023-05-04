@@ -1,14 +1,14 @@
 {
-  "name": "typescript-discord-bot",
+  "name": "Kiti",
   "version": "1.0.0",
-  "description": "Simple TypeScript Bot",
+  "description": "Kiti",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc && npm run build-start",
     "build-start": "node ."
   },
   "keywords": [],
-  "author": "T.F.A#7524",
+  "author": "Kiti",
   "license": "ISC",
   "dependencies": {
     "canvas": "^2.11.2",
