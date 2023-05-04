@@ -1,13 +1,13 @@
 import { config } from 'dotenv';
-import { TypeScriptBot } from "./class/TypeScriptBot";
+import { BotClient } from "./class/BotClient";
 
 config();
 
-export const client: TypeScriptBot = new TypeScriptBot();
+export const client: BotClient = new BotClient();
 
-client.load_commands();
-client.load_events();
+client.loadCommands();
+client.loadEvents();
 client.start();
-client.deploy_commands();
-client.load_modules();
-client.connect_db();
+client.deployCommands();
+client.loadModules();
+client.connectDb();

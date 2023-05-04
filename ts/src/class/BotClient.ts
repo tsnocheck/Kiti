@@ -11,7 +11,7 @@ import {
     unlinkSync
 } from 'fs';
 import {CLIENT_TOKEN, CLIENT_ID, OWNER_ID, TEST_SERVER_ID} from '../config/config.json';
-export class TypeScriptBot extends Client {
+export class BotClient extends Client {
     commands_collection = new Collection<string, object>();
     commands = [];
 
@@ -41,7 +41,7 @@ export class TypeScriptBot extends Client {
             }
         });
     };
-    public async load_commands(auto_deploy?: boolean) {
+    public async loadCommands(auto_deploy?: boolean) {
         const commandsToDelete = [];
 
         for (const directory of readdirSync('./dist/commands/')) {
@@ -80,13 +80,13 @@ export class TypeScriptBot extends Client {
         }
 
         if (auto_deploy) {
-            this.deploy_commands();
+            await this.deployCommands();
         };
 
         return this;
     };
 
-    public async load_modules() {
+    public async loadModules() {
         const moduleDir = './dist/modules/';
         
         for (const directory of readdirSync(moduleDir)) {
@@ -105,7 +105,7 @@ export class TypeScriptBot extends Client {
         return this;
       };
 
-    public async load_events() {
+    public async loadEvents() {
         for (const directory of readdirSync('./dist/events/')) {
             for (const file of readdirSync('./dist/events/' + directory + '/').filter((f) => f.endsWith('.js'))) {
                 require('../events/' + directory + '/' + file);
@@ -117,7 +117,7 @@ export class TypeScriptBot extends Client {
         return this;
     };
 
-    public async deploy_commands() {
+    public async deployCommands() {
         const rest = new REST({
             version: '10'
         }).setToken(CLIENT_TOKEN);
@@ -138,13 +138,13 @@ export class TypeScriptBot extends Client {
 
         return this;
     };
-    public async delete_command(command_name: string, auto_deploy?: boolean) {
+    public async deleteCommand(command_name: string, auto_deploy?: boolean) {
         if (!this.commands_collection.has(command_name)) return;
 
         this.commands_collection.delete(command_name);
 
         if (auto_deploy) {
-            this.deploy_commands();
+            this.deployCommands();
         };
 
         return this;
