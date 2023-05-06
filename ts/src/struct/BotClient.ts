@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Client, Collection } from 'discord.js';
 import { ClientOptions } from 'discord.js';
 import { Command } from './Command';
@@ -12,30 +13,7 @@ export class BotClient extends Client {
 
     this.commands = new Collection<string, Command>();
   }
-
-  private async loadCommands(...dirs: string[]) {
-    for (const dir of dirs) {
-      const files = await readdir(join(__dirname, dir));
-
-      for (const file of files) {
-        const stat = await lstat(join(__dirname, dir, file));
-        if (stat.isDirectory()) await this.loadCommands(join(dir, file))
-        else {
-          if (file.endsWith('.js')) {
-            try {
-              const module: Command = new (
-                  await import(join(__dirname, dir, file))
-              ).default(this);
-
-              this.commands.set(module.name, module);
-            } catch (e) {
-              console.error(`Ошибка при загрузке команды из файла ${file}: ${e}`);
-            }
-          }
-        }
-      }
-    }
-  }
+  private async loadCommands(){}
 
   protected async registerCommands(...dirs: string[]) {
     for (const dir of dirs) {
@@ -43,14 +21,21 @@ export class BotClient extends Client {
 
       for (const file of files) {
         const stat = await lstat(join(__dirname, dir, file));
-        if (stat.isDirectory()) await this.registerCommands(join(dir, file))
+        if (stat.isDirectory()) await this.registerCommands(join(dir, file));
         else {
           if (file.endsWith('.js')) {
             try {
-              const module: Command = new (
-                await import(join(__dirname, dir, file))
-              ).default(this);
-            } catch (e) {}
+              // const module: Command = new (
+              //     await import(join(__dirname, dir, file))
+              // ).default(this);
+              const commandModule = await import(join(__dirname, dir, file));
+              const command = new commandModule.default(this) as Command;
+              this.commands.set(command.name, command);
+            } catch (e) {
+              console.log(
+                `Ошибка при загрузке команды из файла ${file}: \n${e}`,
+              );
+            }
           }
         }
       }
