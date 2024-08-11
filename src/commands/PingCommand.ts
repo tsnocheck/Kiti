@@ -12,7 +12,6 @@ import {IFeature} from "../lib/discord/Feature";
 export default class PingCommand implements ICommand {
     name = 'ping';
     description = 'Pong!';
-    features = [new ButtonFeature()];
 
     run({ interaction }: { interaction: CommandInteraction }) {
         const button = new ButtonBuilder().setCustomId("PingButton").setLabel("Ping").setStyle(ButtonStyle.Primary);

@@ -28,6 +28,7 @@ class BotClient extends Client {
             console.log('Register events and commands..')
             await this.__registerCommands(path.join(__dirname, '../..', 'commands'))
             await this.__registerEvents(path.join(__dirname, '../..', 'events'))
+            await this.__registerFeatures(path.join(__dirname, '../..', 'features'))
         } catch(e) {
             console.log(e)
             process.exit(1)
@@ -76,6 +77,20 @@ class BotClient extends Client {
                 const module = new((await import(path.join(eventsPath, file))).default) as IEvent
 
                 this.on(module.name, (...args) => module.run(this, ...args))
+            }
+        }
+    }
+    
+    private async __registerFeatures(featuresPath: string) {
+        const dir = await fs.readdir(featuresPath)
+        for (const file of dir) {
+            const stat = await fs.lstat(path.join(featuresPath, file))
+            if(stat.isDirectory()) {
+                await this.__registerFeatures(path.join(featuresPath, file))
+            } else {
+                if(!file.endsWith(".js")) return;
+                const module = new((await import(path.join(featuresPath, file))).default) as IFeature<unknown>
+                this.features.set(module.name, module)
             }
         }
     }
