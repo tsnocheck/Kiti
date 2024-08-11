@@ -1,0 +1,21 @@
+import {
+    ApplicationCommandOption, ApplicationCommandOptionData,
+    ButtonInteraction,
+    CommandInteraction, Message,
+    MessageComponentInteraction,
+    ModalSubmitInteraction
+} from "discord.js";
+import {BotClient} from "./Client";
+import {IFeature} from "./Feature";
+
+interface ICommand {
+    name: string;
+    description: string;
+    options?: ApplicationCommandOptionData[];
+    features?: IFeature<any>[];
+    run: RunCommand;
+}
+
+type RunCommand = ({ interaction, client } : { interaction: CommandInteraction, client: BotClient }) => any;
+
+export { ICommand };
