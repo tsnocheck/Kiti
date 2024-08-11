@@ -1,10 +1,9 @@
 import {ICommand} from "../lib/discord/Command";
 import {
-    ActionRowBuilder, BaseInteraction,
+    ActionRowBuilder,
     ButtonBuilder,
     ButtonInteraction,
     ButtonStyle,
-    CacheType,
     CommandInteraction
 } from "discord.js";
 import {IFeature} from "../lib/discord/Feature";

@@ -1,4 +1,4 @@
-import {ApplicationCommandDataResolvable, ApplicationCommandResolvable, Client, ClientOptions} from "discord.js";
+import {ApplicationCommandDataResolvable, Client, ClientOptions} from "discord.js";
 import {ICommand} from "./Command";
 import {IFeature} from "./Feature";
 import * as fs from "node:fs/promises";
