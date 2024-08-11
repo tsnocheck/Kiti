@@ -1,34 +1,63 @@
-import {ApplicationCommandDataResolvable, ApplicationCommandResolvable, Client, ClientOptions} from "discord.js";
+import {ApplicationCommandDataResolvable, GatewayIntentBits, Client} from "discord.js";
+import { logger } from '../../services/logger'
 import {ICommand} from "./Command";
 import {IFeature} from "./Feature";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import {IEvent} from "./Event";
+import mongoose from 'mongoose';
 
 class BotClient extends Client {
     commands: Map<string, ICommand>;
     features: Map<string, IFeature<unknown>>;
-    constructor(options: ClientOptions) {
-        super(options);
-
-        this.commands = new Map<string, ICommand>();
-        this.features = new Map<string, IFeature<unknown>>();
-    }
+	constructor() {
+		//@ts-ignore
+		super({
+			intents: [
+				GatewayIntentBits.Guilds,
+				GatewayIntentBits.GuildMembers,
+				GatewayIntentBits.GuildEmojisAndStickers,
+				GatewayIntentBits.GuildIntegrations,
+				GatewayIntentBits.GuildWebhooks,
+				GatewayIntentBits.GuildInvites,
+				GatewayIntentBits.GuildVoiceStates,
+				GatewayIntentBits.GuildPresences,
+				GatewayIntentBits.GuildMessages,
+				GatewayIntentBits.GuildMessageReactions,
+				GatewayIntentBits.GuildMessageTyping,
+				GatewayIntentBits.DirectMessages,
+				GatewayIntentBits.DirectMessageReactions,
+				GatewayIntentBits.DirectMessageTyping
+			],
+		});
+		
+		this.commands = new Map<string, ICommand>();
+		this.features = new Map<string, IFeature<unknown>>();
+	}
 
     public async build(token: string) {
         try {
-            console.log('Logging to client..')
+	          logger.info('Logging to client..')
             await super.login(token)
+	          logger.info('Success login to client..')
         } catch(e) {
             console.log(e)
             process.exit(1)
         }
 
+				try{
+					await this.connectToDatabase(process.env.MONGO_URL!)
+				}catch(e){
+					console.log(e)
+					process.exit(1)
+				}
+				
         try {
-            console.log('Register events and commands..')
+	          logger.info('Register events and commands..')
             await this.__registerCommands(path.join(__dirname, '../..', 'commands'))
             await this.__registerEvents(path.join(__dirname, '../..', 'events'))
             await this.__registerFeatures(path.join(__dirname, '../..', 'features'))
+	          logger.info('Successfully registered events and commands..')
         } catch(e) {
             console.log(e)
             process.exit(1)
@@ -40,7 +69,18 @@ class BotClient extends Client {
 
          }
     }
-
+	
+	public async connectToDatabase(mongoUrl: string){
+		try {
+			logger.info('Connecting to database...');
+			await mongoose.connect(mongoUrl);
+			logger.info('Successfully connected to the database.');
+		} catch (error) {
+			logger.error(`Failed to connect to the database: ${error}`);
+			process.exit(1);
+		}
+	};
+		
     private async __registerCommands(commandsPath: string) {
         const dir = await fs.readdir(commandsPath)
         for (const file of dir) {
@@ -53,7 +93,7 @@ class BotClient extends Client {
                 try {
                      module = new((await import(path.join(commandsPath, file))).default) as ICommand
                 } catch(e) {
-                    console.log('Failed to load command ' + path.join(commandsPath, file))
+	                  logger.error('Failed to load command ' + path.join(commandsPath, file));
                     continue;
                 }
                 if(module.features) {
@@ -97,7 +137,7 @@ class BotClient extends Client {
 
     private async __loadCommands(guildId: string) {
         const guild = await this.guilds.fetch(guildId);
-        await guild.commands.set(this.__convertCommands())
+	      await guild.commands.set(this.__convertCommands())
     }
 
     private __convertCommands(): ApplicationCommandDataResolvable[] {
