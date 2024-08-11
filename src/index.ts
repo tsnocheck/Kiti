@@ -4,8 +4,6 @@ import {config} from "dotenv";
 
 config()
 
-const client = new BotClient({
-    intents: [IntentsBitField.Flags.Guilds]
-})
+const client = new BotClient()
 
 client.build(process.env.TOKEN!)
