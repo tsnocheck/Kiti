@@ -1,4 +1,4 @@
-import {ApplicationCommandDataResolvable, GatewayIntentBits, Client} from "discord.js";
+import {ApplicationCommandDataResolvable, ApplicationCommandResolvable, Client, ClientOptions} from "discord.js";
 import {ICommand} from "./Command";
 import {IFeature} from "./Feature";
 import * as fs from "node:fs/promises";
@@ -8,30 +8,12 @@ import {IEvent} from "./Event";
 class BotClient extends Client {
     commands: Map<string, ICommand>;
     features: Map<string, IFeature<unknown>>;
-		constructor() {
-			//@ts-ignore
-			super({
-				intents: [
-					GatewayIntentBits.Guilds,
-					GatewayIntentBits.GuildMembers,
-					GatewayIntentBits.GuildEmojisAndStickers,
-					GatewayIntentBits.GuildIntegrations,
-					GatewayIntentBits.GuildWebhooks,
-					GatewayIntentBits.GuildInvites,
-					GatewayIntentBits.GuildVoiceStates,
-					GatewayIntentBits.GuildPresences,
-					GatewayIntentBits.GuildMessages,
-					GatewayIntentBits.GuildMessageReactions,
-					GatewayIntentBits.GuildMessageTyping,
-					GatewayIntentBits.DirectMessages,
-					GatewayIntentBits.DirectMessageReactions,
-					GatewayIntentBits.DirectMessageTyping
-				],
-			});
-			
-			this.commands = new Map<string, ICommand>();
-			this.features = new Map<string, IFeature<unknown>>();
-		}
+    constructor(options: ClientOptions) {
+        super(options);
+
+        this.commands = new Map<string, ICommand>();
+        this.features = new Map<string, IFeature<unknown>>();
+    }
 
     public async build(token: string) {
         try {
@@ -53,7 +35,7 @@ class BotClient extends Client {
         }
 
          try {
-            await this.__loadCommands('943522879901937724')
+            await this.__loadCommands('1068820644277518376')
          } catch(e) {
 
          }
@@ -79,9 +61,6 @@ class BotClient extends Client {
                         this.features.set(feature.name, feature)
                     }
                 }
-	              this.application.commands.set([])
-		              .then(console.log)
-		              .catch(console.error)
                 this.commands.set(module.name, module)
             }
         }
