@@ -1,5 +1,4 @@
 import {BotClient} from "./lib/discord/Client";
-import {IntentsBitField} from "discord.js";
 import {config} from "dotenv";
 
 config()
