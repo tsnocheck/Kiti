@@ -46,7 +46,7 @@ class BotClient extends Client {
     }
 
     try {
-      await this.connectToDatabase(process.env.MONGO_URL!)
+      await this.connectToDatabase(process.env.MONGOURI!)
     } catch (e) {
       console.log(e)
       process.exit(1)
