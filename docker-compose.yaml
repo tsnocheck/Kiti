@@ -10,6 +10,7 @@ services:
       - mongo
     networks:
       - bridge
+    restart: no
   mongo:
     image: mongo:latest
     container_name: mongo
@@ -39,9 +40,49 @@ services:
     - ME_CONFIG_BASICAUTH=false
     depends_on:
       - mongo
-
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - grafana-data:/etc/grafana/provisioning/datasources
+    env_file:
+      - .env
+    networks:
+      - bridge
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+    networks:
+      - bridge
+  pushgateway:
+    image: prom/pushgateway
+    container_name: pushgateway
+    restart: unless-stopped
+    expose:
+      - 9091
+    ports:
+      - "9091:9091"
+    networks:
+      - bridge
+    labels:
+      org.label-schema.group: "monitoring"
 volumes:
   mongodb:
+  grafana-data:
+  bot:
+  prom_data:
 
 networks:
   bridge:
