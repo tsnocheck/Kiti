@@ -21,14 +21,14 @@ services:
     volumes:
       - mongodb:/data/db
     ports:
-      - "27017:27017"
+      - 27017:27017
     networks:
       - bridge
   mongo-express:
     image: mongo-express
     restart: on-failure
     ports:
-      - "8081:8081"
+      - 8081:8081
     networks:
       - bridge
     env_file:
@@ -41,14 +41,14 @@ services:
     depends_on:
       - mongo
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana-oss
     container_name: grafana
     restart: unless-stopped
     ports:
       - 3000:3000
     volumes:
       - grafana-data:/var/lib/grafana
-      - grafana-data:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning:/etc/grafana/provisioning
     env_file:
       - .env
     networks:
@@ -70,18 +70,41 @@ services:
     image: prom/pushgateway
     container_name: pushgateway
     restart: unless-stopped
-    expose:
-      - 9091
     ports:
-      - "9091:9091"
+      - 9091:9091
     networks:
       - bridge
-    labels:
-      org.label-schema.group: "monitoring"
+  nodeexporter:
+    image: prom/node-exporter:v0.18.1
+    container_name: nodeexporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    ports:
+      - 9100:9100
+    networks:
+      - bridge
+  cadvisor:
+    image: google/cadvisor:latest
+    container_name: monitoring_cadvisor
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 8080:8080
 volumes:
   mongodb:
   grafana-data:
-  bot:
   prom_data:
 
 networks:
