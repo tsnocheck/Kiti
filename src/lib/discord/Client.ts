@@ -76,7 +76,7 @@ class BotClient extends Client {
   public async connectToDatabase(mongoUrl: string) {
     try {
       logger.info('Connecting to database...');
-      await mongoose.connect(mongoUrl);
+      await mongoose.connect(mongoUrl, { dbName: 'bot' });
       logger.info('Successfully connected to the database.');
     } catch (error) {
       logger.error(`Failed to connect to the database: ${error}`);
