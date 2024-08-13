@@ -9,7 +9,7 @@ class PrometheusClient {
   
   private guildCountGauge: Gauge<string>;
   private userCountGauge: Gauge<string>;
-  private formCountGauge: Gauge<string>;
+  private deleteGuildNumber: Gauge<string>;
   
   private commandCountGauge: Counter<string>;
   private buttonCountGauge: Counter<string>;
@@ -49,9 +49,9 @@ class PrometheusClient {
       registers: [this.registry],
     });
     
-    this.formCountGauge = new Gauge({
-      name: 'forms',
-      help: 'The total number of forms',
+    this.deleteGuildNumber = new Gauge({
+      name: 'deleteGuildCount',
+      help: 'The total number of delete guild count',
       registers: [this.registry],
     });
     
@@ -103,7 +103,17 @@ class PrometheusClient {
       registers: [this.registry],
     });
   }
-
+  
+  public async incrementDeleteGuildNumber() {
+    this.deleteGuildNumber.dec();
+    await this.pushMetrics();
+  }
+  
+  public async addDeleteGuildNumber() {
+    this.deleteGuildNumber.inc();
+    await this.pushMetrics();
+  }
+  
   public async pushGuildCount(guildCount: number) {
     this.guildCountGauge.set(guildCount);
     await this.pushMetrics();
@@ -111,11 +121,6 @@ class PrometheusClient {
   
   public async pushUserCount(userCount: number) {
     this.userCountGauge.set(userCount);
-    await this.pushMetrics();
-  }
-  
-  public async pushFormCount(formCount: number) {
-    this.formCountGauge.set(formCount);
     await this.pushMetrics();
   }
 
