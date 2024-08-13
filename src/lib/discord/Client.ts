@@ -1,5 +1,6 @@
 import {ApplicationCommandDataResolvable, Client, GatewayIntentBits} from "discord.js";
 import {logger} from '../../services/logger'
+import { PrometheusClient } from '../prometheus/client'
 import {ICommand} from "./Command";
 import {IFeature} from "./Feature";
 import * as fs from "node:fs/promises";
@@ -10,7 +11,8 @@ import mongoose from 'mongoose';
 class BotClient extends Client {
   commands: Map<string, ICommand>;
   features: Map<string, IFeature<unknown>>;
-
+  metrics: PrometheusClient;
+  
   constructor() {
     super({
       intents: [
@@ -30,7 +32,7 @@ class BotClient extends Client {
         GatewayIntentBits.DirectMessageTyping
       ],
     });
-
+    this.metrics = new PrometheusClient()
     this.commands = new Map<string, ICommand>();
     this.features = new Map<string, IFeature<unknown>>();
   }
