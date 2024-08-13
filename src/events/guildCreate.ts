@@ -10,7 +10,7 @@ export default class GuildCreate implements IEvent {
     let guildCount = await client.guilds.fetch()
     await client.metrics.pushGuildCount(guildCount.size)
     
-    let guildId = client.redis.get(guild.id)
+    let guildId = client.redis?.get(guild.id)
     if(!guildId) return
     await client.metrics.incrementDeleteGuildCount()
   }

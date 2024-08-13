@@ -11,7 +11,7 @@ export default class GuildDelete implements IEvent {
     await client.metrics.pushGuildCount(guildCount.size)
     await client.metrics.addDeleteGuildCount()
     
-    client.redis.set(guild.id, guild.id, {
+    client.redis?.set(guild.id, guild.id, {
       EX: 15 * 1000,
       NX: true
     })

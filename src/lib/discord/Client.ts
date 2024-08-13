@@ -7,15 +7,15 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import {IEvent} from "./Event";
 import mongoose from 'mongoose';
-import { RedisClientType } from 'redis'
+import {createClient, RedisClientType} from "redis";
 
 class BotClient extends Client {
   commands: Map<string, ICommand>;
   features: Map<string, IFeature<unknown>>;
   metrics: PrometheusClient;
-  redis: RedisClientType;
+  redis?: RedisClientType;
   
-  constructor(redis: RedisClientType) {
+  constructor() {
     super({
       intents: [
         GatewayIntentBits.Guilds,
@@ -37,7 +37,7 @@ class BotClient extends Client {
     this.metrics = new PrometheusClient()
     this.commands = new Map<string, ICommand>();
     this.features = new Map<string, IFeature<unknown>>();
-    this.redis = redis
+    this.redis = undefined;
   }
 
   public async build(token: string) {
@@ -54,6 +54,18 @@ class BotClient extends Client {
       await this.connectToDatabase(process.env.MONGOURI!)
     } catch (e) {
       console.log(e)
+      process.exit(1)
+    }
+
+    try {
+      logger.info('Connecting to redis..')
+      this.redis = createClient({
+        url: `redis://redis:6379/0`
+      })
+      await this.redis.connect()
+      logger.info('Success connect to redis..')
+    } catch (e) {
+      logger.error(`Failed connect to redis... ${e}`)
       process.exit(1)
     }
 

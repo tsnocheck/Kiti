@@ -1,13 +1,8 @@
 import {BotClient} from "./lib/discord/Client";
 import {config} from "dotenv";
-import { createClient } from 'redis'
 
 config()
 
-const redis = createClient({
-  url: 'redis://root:admin@redis:6379'
-});
-
-const client = new BotClient(redis)
+const client = new BotClient()
 
 client.build(process.env.TOKEN!)
