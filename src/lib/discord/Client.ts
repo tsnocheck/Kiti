@@ -1,5 +1,5 @@
 import {ApplicationCommandDataResolvable, Client, GatewayIntentBits} from "discord.js";
-import {logger} from '../../services/logger'
+import {logger} from '../services/logger'
 import { PrometheusClient } from '../prometheus/client'
 import {ICommand} from "./Command";
 import {IFeature} from "./Feature";

@@ -2,7 +2,7 @@ import { InteractionType } from 'discord-api-types/v10'
 import {IEvent} from "../lib/discord/Event";
 import {BaseInteraction} from "discord.js";
 import {BotClient} from "../lib/discord/Client";
-import { logger } from '../services/logger'
+import { logger } from '../lib/services/logger'
 
 export default class InteractionCreateEvent implements IEvent {
   name = "interactionCreate";
