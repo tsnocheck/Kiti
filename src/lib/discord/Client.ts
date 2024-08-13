@@ -43,14 +43,14 @@ class BotClient extends Client {
       await super.login(token)
       logger.info('Success login to client..')
     } catch (e) {
-      console.log(e)
+      logger.error(e)
       process.exit(1)
     }
 
     try {
       await this.connectToDatabase(process.env.MONGOURI!)
     } catch (e) {
-      console.log(e)
+      logger.error(e)
       process.exit(1)
     }
 
@@ -61,14 +61,15 @@ class BotClient extends Client {
       await this.__registerFeatures(path.join(__dirname, '../..', 'features'))
       logger.info('Successfully registered events and commands..')
     } catch (e) {
-      console.log(e)
+      logger.error(e)
       process.exit(1)
     }
 
     try {
-      await this.__loadCommands('1068820644277518376')
+      logger.info('Loading commands to Discord API..')
+      await this.__loadCommands(process.env.MODE!)
     } catch (e) {
-
+      logger.error('Failed to load commands to Discord API: ' + e)
     }
   }
 
@@ -137,9 +138,13 @@ class BotClient extends Client {
     }
   }
 
-  private async __loadCommands(guildId: string) {
-    const guild = await this.guilds.fetch(guildId);
-    await guild.commands.set(this.__convertCommands())
+  private async __loadCommands(mode: string) {
+    if(mode === 'prod') {
+      await this.application!.commands.set(this.__convertCommands())
+    } else {
+      const guild = await this.guilds.fetch(process.env.DEV_GUILDID!);
+      await guild.commands.set(this.__convertCommands())
+    }
   }
 
   private __convertCommands(): ApplicationCommandDataResolvable[] {
