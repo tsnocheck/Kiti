@@ -1,4 +1,4 @@
-import { prop, Ref } from '@typegoose/typegoose';
+import { prop } from '@typegoose/typegoose';
 class User {
 	@prop({ required: true })
 	public userId!: string;

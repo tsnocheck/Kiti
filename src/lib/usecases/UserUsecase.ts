@@ -21,19 +21,17 @@ export class UserUsecase {
   }
 
   async createForm(dto: CreateFormDto ): Promise<Nullable<Document>> {
-    const form = await this.users.create(dto);
-    return form;
+    return await this.users.create(dto);
   }
 
   async getRandomForm(): Promise<Nullable<Document>>{
     const count = await this.users.countDocuments();
 
-    const form = await this.users.findOne().skip(Math.round(Math.random() * count))
-    return form;
+    return this.users.findOne().skip(Math.round(Math.random() * count));
   }
   
   async like(userId: string, likedUser: string): Promise<boolean> {
-    const form = await this.users.findOneAndUpdate({userId}, {$push: {likedBy: likedUser}}, { new: true, upsert: true });
+    await this.users.findOneAndUpdate({userId}, {$push: {likedBy: likedUser}}, { new: true, upsert: true });
     return true;
   }
 
