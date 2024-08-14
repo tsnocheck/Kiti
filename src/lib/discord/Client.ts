@@ -7,13 +7,11 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import {IEvent} from "./Event";
 import mongoose from 'mongoose';
-import {createClient, RedisClientType} from "redis";
 
 class BotClient extends Client {
   commands: Map<string, ICommand>;
   features: Map<string, IFeature<unknown>>;
   metrics: PrometheusClient;
-  redis?: RedisClientType;
   
   constructor() {
     super({
@@ -37,7 +35,6 @@ class BotClient extends Client {
     this.metrics = new PrometheusClient()
     this.commands = new Map<string, ICommand>();
     this.features = new Map<string, IFeature<unknown>>();
-    this.redis = undefined;
   }
 
   public async build(token: string) {
