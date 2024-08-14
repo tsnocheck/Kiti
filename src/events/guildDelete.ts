@@ -9,9 +9,9 @@ export default class GuildDelete implements IEvent {
   async run(client: BotClient, guild: Guild) {
     let guildCount = await client.guilds.fetch()
     await client.metrics.pushGuildCount(guildCount.size)
-    await client.metrics.addDeleteGuildNumber()
+    await client.metrics.addDeleteGuildCount()
     
-    client.redis.set('guildDelete', guild.id, {
+    client.redis?.set(guild.id, guild.id, {
       EX: 15 * 1000,
       NX: true
     })

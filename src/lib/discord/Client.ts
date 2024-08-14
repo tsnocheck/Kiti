@@ -7,15 +7,13 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import {IEvent} from "./Event";
 import mongoose from 'mongoose';
-import { RedisClientType } from 'redis'
 
 class BotClient extends Client {
   commands: Map<string, ICommand>;
   features: Map<string, IFeature<unknown>>;
   metrics: PrometheusClient;
-  redis: RedisClientType
   
-  constructor(redis: RedisClientType) {
+  constructor() {
     super({
       intents: [
         GatewayIntentBits.Guilds,
@@ -37,7 +35,6 @@ class BotClient extends Client {
     this.metrics = new PrometheusClient()
     this.commands = new Map<string, ICommand>();
     this.features = new Map<string, IFeature<unknown>>();
-    this.redis = redis
   }
 
   public async build(token: string) {
@@ -46,14 +43,26 @@ class BotClient extends Client {
       await super.login(token)
       logger.info('Success login to client..')
     } catch (e) {
-      console.log(e)
+      logger.error(e)
       process.exit(1)
     }
 
     try {
       await this.connectToDatabase(process.env.MONGOURI!)
     } catch (e) {
-      console.log(e)
+      logger.error(e)
+      process.exit(1)
+    }
+
+    try {
+      logger.info('Connecting to redis..')
+      this.redis = createClient({
+        url: `redis://redis:6379/0`
+      })
+      await this.redis.connect()
+      logger.info('Success connect to redis..')
+    } catch (e) {
+      logger.error(`Failed connect to redis... ${e}`)
       process.exit(1)
     }
 
@@ -64,21 +73,22 @@ class BotClient extends Client {
       await this.__registerFeatures(path.join(__dirname, '../..', 'features'))
       logger.info('Successfully registered events and commands..')
     } catch (e) {
-      console.log(e)
+      logger.error(e)
       process.exit(1)
     }
 
     try {
-      await this.__loadCommands('1068820644277518376')
+      logger.info('Loading commands to Discord API..')
+      await this.__loadCommands(process.env.MODE!)
     } catch (e) {
-
+      logger.error('Failed to load commands to Discord API: ' + e)
     }
   }
 
   public async connectToDatabase(mongoUrl: string) {
     try {
       logger.info('Connecting to database...');
-      await mongoose.connect(mongoUrl);
+      await mongoose.connect(mongoUrl, { dbName: 'bot' });
       logger.info('Successfully connected to the database.');
     } catch (error) {
       logger.error(`Failed to connect to the database: ${error}`);
@@ -140,9 +150,13 @@ class BotClient extends Client {
     }
   }
 
-  private async __loadCommands(guildId: string) {
-    const guild = await this.guilds.fetch(guildId);
-    await guild.commands.set(this.__convertCommands())
+  private async __loadCommands(mode: string) {
+    if(mode === 'prod') {
+      await this.application!.commands.set(this.__convertCommands())
+    } else {
+      const guild = await this.guilds.fetch(process.env.DEV_GUILDID!);
+      await guild.commands.set(this.__convertCommands())
+    }
   }
 
   private __convertCommands(): ApplicationCommandDataResolvable[] {

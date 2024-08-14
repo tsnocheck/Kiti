@@ -1,6 +1,7 @@
 import { createClient, type RedisClientType } from 'redis'
 import {BotClient} from "./lib/discord/Client";
 import {config} from "dotenv";
+
 config()
 
 const redis: RedisClientType = createClient({
