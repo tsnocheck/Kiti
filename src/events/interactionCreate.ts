@@ -13,11 +13,31 @@ export default class InteractionCreateEvent implements IEvent {
         const command = client.commands.get(interaction.commandName);
         
         if (command) {
+          const preconditions = command.preconditions?.map((pre) => client.preconditions.get(pre));
+          if (preconditions) {
+            let result = true;
+            for (const precondition of preconditions) {
+              result = await precondition!.run({interaction, client});
+            }
+            if (!result) {
+              return;
+            }
+          }
           command.run({interaction, client});
         }
       } else if (interaction.isMessageComponent()) {
         const feature = client.features.get(interaction.customId);
         if (feature) {
+          const preconditions = feature.preconditions?.map((pre) => client.preconditions.get(pre));
+          if (preconditions) {
+            let result = true;
+            for (const precondition of preconditions) {
+              result = await precondition!.run({interaction, client});
+            }
+            if (!result) {
+              return;
+            }
+          }
           feature.run({interaction, client});
         }
       }
