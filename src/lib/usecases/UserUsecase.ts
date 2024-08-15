@@ -31,7 +31,8 @@ export class UserUsecase {
   }
   
   async like(userId: string, likedUser: string): Promise<boolean> {
-    await this.users.findOneAndUpdate({userId}, {$push: {likedBy: likedUser}}, { new: true, upsert: true });
+    await this.likes.findOneAndUpdate({userId}, {$push: {likedTo: likedUser}}, { new: true, upsert: true });
+    await this.likes.findOneAndUpdate({likedUser}, {$push: {likedBy: likedUser}}, { new: true, upsert: true });
     return true;
   }
 
