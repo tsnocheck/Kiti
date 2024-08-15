@@ -27,7 +27,7 @@ export class UserUsecase {
   }
   
   async findByUserId(userId: string){
-    return this.users.findOne({userId: userId})
+    return this.users.findOne({userId: userId}).exec()
   }
 
   async getRandomForm(){
