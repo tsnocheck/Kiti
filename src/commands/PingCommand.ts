@@ -12,6 +12,7 @@ import { UserUsecase } from '../lib/usecases/UserUsecase'
 export default class PingCommand implements ICommand {
   name = 'find';
   description = 'Поиск анкет';
+  preconditions = ['NicknamePrecondition']
 
   async run({interaction}: { interaction: CommandInteraction }) {
     let usecases = new UserUsecase()
