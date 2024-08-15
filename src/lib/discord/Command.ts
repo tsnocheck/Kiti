@@ -7,6 +7,7 @@ interface ICommand {
   description: string;
   options?: ApplicationCommandOptionData[];
   features?: IFeature<any>[];
+  preconditions?: string[];
   run: RunCommand;
 }
 

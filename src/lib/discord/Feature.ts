@@ -2,6 +2,7 @@ import {BotClient} from "./Client";
 
 interface IFeature<T> {
   name: string;
+  preconditions?: string[];
   run: RunFeature<T>;
 }
 
