@@ -8,7 +8,10 @@ class User {
 
   @prop({ required: true })
   public name!: string;
-
+  
+  @prop({ required: true })
+  public city!: string;
+  
   @prop({ required: true })
   public sex!: string;
 

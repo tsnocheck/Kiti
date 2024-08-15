@@ -26,11 +26,11 @@ export default class InteractionCreateEvent implements IEvent {
           command.run({interaction, client});
         }
       } else if (interaction.isMessageComponent()) {
-        const feature = client.features.get(interaction.customId);
+        const feature = client.features.get(interaction.customId.split('_')[0]);
         if (feature) {
           const preconditions = feature.preconditions?.map((pre) => client.preconditions.get(pre));
           if (preconditions) {
-            let result = true;
+            let result = false;
             for (const precondition of preconditions) {
               result = await precondition!.run({interaction, client});
             }

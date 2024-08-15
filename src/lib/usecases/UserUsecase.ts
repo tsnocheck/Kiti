@@ -5,16 +5,18 @@ import {Nullable} from "../helpers/types";
 import {Likes} from "../schemas/Likes";
 
 export interface CreateFormDto {
+  userId: string;
   name: string;
   sex: string;
+  city: string;
   age: number;
   status?: string;
   photo?: string;
 }
 
 export class UserUsecase {
-  users: Model<User>
-  likes: Model<Likes>
+  private users: Model<User>
+  private likes: Model<Likes>
   constructor() {
     this.users = getModelForClass(User);
     this.likes = getModelForClass(Likes);
@@ -23,16 +25,23 @@ export class UserUsecase {
   async createForm(dto: CreateFormDto ): Promise<Nullable<Document>> {
     return await this.users.create(dto);
   }
+  
+  async findByUserId(userId: string){
+    return this.users.findOne({userId: userId})
+  }
 
-  async getRandomForm(): Promise<Nullable<Document>>{
+  async getRandomForm(){
     const count = await this.users.countDocuments();
 
-    return this.users.findOne().skip(Math.round(Math.random() * count));
+    return this.users.findOne().skip(Math.round(Math.random() * count))
   }
   
   async like(userId: string, likedUser: string): Promise<boolean> {
-    await this.likes.findOneAndUpdate({userId}, {$push: {likedTo: likedUser}}, { new: true, upsert: true });
-    await this.likes.findOneAndUpdate({likedUser}, {$push: {likedBy: likedUser}}, { new: true, upsert: true });
+    let user = await this.findByUserId(userId)
+    let member = await this.findByUserId(likedUser)
+    await this.likes.findOneAndUpdate({userId}, {$push: {likedTo: user}}, { new: true, upsert: true });
+    await this.likes.findOneAndUpdate({userId: likedUser}, {$push: {likedBy: member}}, { new: true, upsert: true });
+    
     return true;
   }
 
