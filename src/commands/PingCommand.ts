@@ -1,23 +1,29 @@
 import {ICommand} from "../lib/discord/Command";
 import {ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CommandInteraction} from "discord.js";
-import {IFeature} from "../lib/discord/Feature";
 
 export default class PingCommand implements ICommand {
-  name = 'ping';
-  description = 'Pong!';
+  name = 'find';
+  description = 'Поиск анкет';
 
   run({interaction}: { interaction: CommandInteraction }) {
-    const button = new ButtonBuilder().setCustomId("PingButton").setLabel("Ping").setStyle(ButtonStyle.Primary);
-    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button)
-    interaction.reply({components: [row], content: "Pong!"});
+    const buttons = new ActionRowBuilder<ButtonBuilder>()
+      .addComponents(
+        new ButtonBuilder()
+          .setCustomId('LikeButton')
+          .setLabel('лайк')
+          .setStyle(ButtonStyle.Secondary),
+        new ButtonBuilder()
+          .setCustomId('MessageLikeButton')
+          .setLabel('лай мессадж')
+          .setStyle(ButtonStyle.Secondary),
+        new ButtonBuilder()
+          .setCustomId('DisLikeButton')
+          .setLabel('дис лайк')
+          .setStyle(ButtonStyle.Secondary),
+        new ButtonBuilder()
+          .setCustomId('ReportButton')
+          .setLabel('репорт')
+          .setStyle(ButtonStyle.Secondary),
+      )
   }
-}
-
-class ButtonFeature implements IFeature<ButtonInteraction> {
-  name = "PingButton"
-
-  run({interaction}: { interaction: ButtonInteraction }): any {
-    interaction.reply("Double Pong!");
-  }
-
 }
