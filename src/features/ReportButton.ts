@@ -36,7 +36,8 @@ export default class ButtonFeature implements IFeature<ButtonInteraction> {
 
     await interaction.reply({
       content: 'Выберите причину жалобы на анкету',
-      components: [row]
+      components: [row],
+      ephemeral: true
     });
   }
 }
