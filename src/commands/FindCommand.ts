@@ -1,22 +1,15 @@
 import {ICommand} from "../lib/discord/Command";
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, EmbedBuilder} from 'discord.js';
-import {UserUsecase} from '../lib/usecases/UserUsecase';
+import {BotClient} from "../lib/discord/Client";
 
 export default class FindCommand implements ICommand {
   name = 'find';
   description = 'Поиск анкет';
   preconditions = ['CheckForm'];
 
-  async run({interaction}: { interaction: CommandInteraction }) {
-    let usecases = new UserUsecase();
+  async run({interaction, client}: { interaction: CommandInteraction, client: BotClient }) {
+    let usecases = client.userUsecase;
     let form = await usecases.getRandomForm();
-
-    if (!form) {
-      return interaction.reply({
-        content: 'Похоже анкеты кончились, попробуйте позже',
-        ephemeral: true
-      });
-    }
 
     let embed = new EmbedBuilder()
       .setTitle('Анкета')

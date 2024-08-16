@@ -2,7 +2,7 @@ import {IFeature} from "../../lib/discord/Feature";
 import {ActionRowBuilder, ButtonInteraction, ModalBuilder, TextInputBuilder, TextInputStyle} from "discord.js";
 import {BotClient} from "../../lib/discord/Client";
 
-export class ShadowBanButton implements IFeature<ButtonInteraction> {
+export default class ShadowBanButton implements IFeature<ButtonInteraction> {
   name = 'ShadowBanButton';
 
   run = async ({interaction, client}: { interaction: ButtonInteraction, client: BotClient }) => {
