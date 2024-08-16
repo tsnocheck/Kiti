@@ -5,9 +5,9 @@ export class Likes {
   @prop()
   userId!: string;
 
-  @prop({ ref: () => User })
+  @prop({ref: () => User})
   likedBy?: User[];
 
-  @prop({ ref: () => User })
+  @prop({ref: () => User})
   likedTo?: User[];
 }

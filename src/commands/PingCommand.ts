@@ -1,22 +1,15 @@
 import {ICommand} from "../lib/discord/Command";
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonInteraction,
-  ButtonStyle,
-  CommandInteraction,
-  EmbedBuilder
-} from 'discord.js'
-import { UserUsecase } from '../lib/usecases/UserUsecase'
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, EmbedBuilder} from 'discord.js';
+import {UserUsecase} from '../lib/usecases/UserUsecase';
 
 export default class PingCommand implements ICommand {
   name = 'find';
   description = 'Поиск анкет';
-  preconditions = ['NicknamePrecondition']
+  preconditions = ['CheckForm'];
 
   async run({interaction}: { interaction: CommandInteraction }) {
-    let usecases = new UserUsecase()
-    let form = await usecases.getRandomForm()
+    let usecases = new UserUsecase();
+    let form = await usecases.getRandomForm();
 
     let embed = new EmbedBuilder()
       .setTitle('Анкета')
@@ -25,8 +18,8 @@ export default class PingCommand implements ICommand {
         ${form?.status}
       `)
       .setColor(0x2b2d31)
-      .setImage(form?.photo || null)
-    
+      .setImage(form?.photo || null);
+
     const buttons = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
         new ButtonBuilder()
@@ -45,7 +38,7 @@ export default class PingCommand implements ICommand {
           .setCustomId(`ReportButton_${form?.userId}`)
           .setEmoji('<:ticketIcon:1273559224940494858>')
           .setStyle(ButtonStyle.Secondary),
-      )
-    await interaction.reply({embeds:[embed],components:[buttons]})
+      );
+    await interaction.reply({embeds: [embed], components: [buttons]});
   }
 }

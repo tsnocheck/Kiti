@@ -15,33 +15,34 @@ export interface CreateFormDto {
 }
 
 export class UserUsecase {
-  private users: Model<User>
-  private likes: Model<Likes>
+  private users: Model<User>;
+  private likes: Model<Likes>;
+
   constructor() {
     this.users = getModelForClass(User);
     this.likes = getModelForClass(Likes);
   }
 
-  async createForm(dto: CreateFormDto ): Promise<Nullable<Document>> {
+  async createForm(dto: CreateFormDto): Promise<Nullable<Document>> {
     return await this.users.create(dto);
   }
-  
-  async findByUserId(userId: string){
-    return this.users.findOne({userId: userId}).exec()
+
+  async findByUserId(userId: string) {
+    return this.users.findOne({userId: userId}).exec();
   }
 
-  async getRandomForm(){
+  async getRandomForm() {
     const count = await this.users.countDocuments();
 
-    return this.users.findOne().skip(Math.round(Math.random() * count))
+    return this.users.findOne().skip(Math.round(Math.random() * count));
   }
-  
+
   async like(userId: string, likedUser: string): Promise<boolean> {
-    let user = await this.findByUserId(userId)
-    let member = await this.findByUserId(likedUser)
-    await this.likes.findOneAndUpdate({userId}, {$push: {likedTo: user}}, { new: true, upsert: true });
-    await this.likes.findOneAndUpdate({userId: likedUser}, {$push: {likedBy: member}}, { new: true, upsert: true });
-    
+    let user = await this.findByUserId(userId);
+    let member = await this.findByUserId(likedUser);
+    await this.likes.findOneAndUpdate({userId}, {$push: {likedTo: user}}, {new: true, upsert: true});
+    await this.likes.findOneAndUpdate({userId: likedUser}, {$push: {likedBy: member}}, {new: true, upsert: true});
+
     return true;
   }
 

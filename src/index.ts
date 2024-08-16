@@ -1,8 +1,8 @@
 import {BotClient} from "./lib/discord/Client";
 import {config} from "dotenv";
 
-config()
+config();
 
-const client = new BotClient()
+const client = new BotClient();
 
-client.build(process.env.TOKEN!)
+client.build(process.env.TOKEN!);
