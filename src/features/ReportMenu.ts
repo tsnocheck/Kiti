@@ -13,7 +13,11 @@ export default class ReportMenu implements IFeature<StringSelectMenuInteraction>
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
         .setCustomId('BanUser')
-        .setLabel('Забанить')
+        .setLabel('Перманентный бан')
+        .setStyle(ButtonStyle.Danger),
+      new ButtonBuilder()
+        .setCustomId('ShadowBan')
+        .setLabel('Теневой бан')
         .setStyle(ButtonStyle.Danger),
       new ButtonBuilder()
         .setCustomId('DeclineReport')
@@ -23,7 +27,7 @@ export default class ReportMenu implements IFeature<StringSelectMenuInteraction>
 
     const channel = await client.channels.fetch(channelId);
 
-    const form = await client.usercases?.findByUserId(id);
+    const form = await client.userUsecase?.findByUserId(id);
 
     let embed = new EmbedBuilder()
       .setTitle('Анкета')
@@ -32,6 +36,9 @@ export default class ReportMenu implements IFeature<StringSelectMenuInteraction>
         ${form?.status}
       `)
       .setColor(0x2b2d31)
+      .setFooter({
+        text: id
+      })
       .setImage(form?.photo || null);
 
     if (channel?.isTextBased()) {

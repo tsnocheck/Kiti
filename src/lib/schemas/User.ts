@@ -24,6 +24,15 @@ class User {
 
   @prop({required: true})
   public photo!: string;
+
+  @prop({default: false})
+  public banned!: boolean;
+
+  @prop({default: false})
+  public shadowBanned!: boolean;
+
+  @prop({default: ''})
+  public banReason!: string;
 }
 
 export {User};
