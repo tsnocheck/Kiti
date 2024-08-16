@@ -2,7 +2,7 @@ import {ICommand} from "../lib/discord/Command";
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, EmbedBuilder} from 'discord.js';
 import {UserUsecase} from '../lib/usecases/UserUsecase';
 
-export default class PingCommand implements ICommand {
+export default class FindCommand implements ICommand {
   name = 'find';
   description = 'Поиск анкет';
   preconditions = ['CheckForm'];
@@ -10,6 +10,13 @@ export default class PingCommand implements ICommand {
   async run({interaction}: { interaction: CommandInteraction }) {
     let usecases = new UserUsecase();
     let form = await usecases.getRandomForm();
+
+    if (!form) {
+      return interaction.reply({
+        content: 'Похоже анкеты кончились, попробуйте позже',
+        ephemeral: true
+      });
+    }
 
     let embed = new EmbedBuilder()
       .setTitle('Анкета')
