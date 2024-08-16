@@ -25,7 +25,7 @@ export default class InteractionCreateEvent implements IEvent {
           }
           command.run({interaction, client});
         }
-      } else if (interaction.isMessageComponent()) {
+      } else if (interaction.isMessageComponent() || interaction.isModalSubmit()) {
         const feature = client.features.get(interaction.customId.split('_')[0]);
         if (feature) {
           const preconditions = feature.preconditions?.map((pre) => client.preconditions.get(pre));
