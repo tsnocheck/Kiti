@@ -13,7 +13,7 @@ export default class CheckForm implements IPrecondition {
   name = 'CheckForm';
 
   async run({interaction, client}: { interaction: BaseInteraction, client: BotClient }) {
-    let user = await client.usercases?.findByUserId(interaction.user.id);
+    let user = await client.userUsecase?.findByUserId(interaction.user.id);
 
     if (user == null) {
       let button = new ActionRowBuilder<ButtonBuilder>()

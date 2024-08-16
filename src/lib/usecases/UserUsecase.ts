@@ -3,6 +3,7 @@ import {User} from "../schemas/User";
 import {getModelForClass} from "@typegoose/typegoose";
 import {Nullable} from "../helpers/types";
 import {Likes} from "../schemas/Likes";
+import {BotClient} from "../discord/Client";
 
 export interface CreateFormDto {
   userId: string;
@@ -17,10 +18,12 @@ export interface CreateFormDto {
 export class UserUsecase {
   private users: Model<User>;
   private likes: Model<Likes>;
+  private client: BotClient;
 
-  constructor() {
+  constructor(client: BotClient) {
     this.users = getModelForClass(User);
     this.likes = getModelForClass(Likes);
+    this.client = client;
   }
 
   async createForm(dto: CreateFormDto): Promise<Nullable<Document>> {

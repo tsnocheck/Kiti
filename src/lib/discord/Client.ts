@@ -10,6 +10,7 @@ import {Registry} from "./Registry";
 import {IPrecondition} from "./Precondition";
 import * as process from "node:process";
 import {UserUsecase} from '../usecases/UserUsecase';
+import {ModeratorUsecase} from "../usecases/ModeratorUsecase";
 
 class BotClient extends Client {
   commands: Map<string, ICommand>;
@@ -18,7 +19,8 @@ class BotClient extends Client {
   registry: Registry;
   metrics: PrometheusClient;
   redis?: RedisClientType;
-  usercases?: UserUsecase;
+  userUsecase: UserUsecase;
+  moderatorUsecase: ModeratorUsecase;
 
   constructor() {
     super({
@@ -45,7 +47,8 @@ class BotClient extends Client {
     this.preconditions = new Map<string, IPrecondition>();
     this.registry = new Registry(this);
     this.redis = undefined;
-    this.usercases = new UserUsecase();
+    this.userUsecase = new UserUsecase(this);
+    this.moderatorUsecase = new ModeratorUsecase(this);
   }
 
   public async build(token: string) {

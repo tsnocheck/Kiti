@@ -1,12 +1,12 @@
 import {IFeature} from "../lib/discord/Feature";
 import {ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder} from 'discord.js';
-import {UserUsecase} from '../lib/usecases/UserUsecase';
+import {BotClient} from "../lib/discord/Client";
 
 export default class ButtonFeature implements IFeature<ButtonInteraction> {
   name = "LikeButton";
 
-  async run({interaction}: { interaction: ButtonInteraction }): Promise<any> {
-    let usercases = new UserUsecase();
+  async run({interaction, client}: { interaction: ButtonInteraction, client: BotClient }): Promise<any> {
+    let usercases = client.userUsecase;
     let status = await usercases.like(interaction.customId.split('_')[1], interaction.user.id);
     if (status) {
       let form = await usercases.getRandomForm();
