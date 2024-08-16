@@ -12,11 +12,11 @@ export default class ReportMenu implements IFeature<StringSelectMenuInteraction>
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
-        .setCustomId('BanUser')
+        .setCustomId('BanButton')
         .setLabel('Перманентный бан')
         .setStyle(ButtonStyle.Danger),
       new ButtonBuilder()
-        .setCustomId('ShadowBan')
+        .setCustomId('ShadowBanButton')
         .setLabel('Теневой бан')
         .setStyle(ButtonStyle.Danger),
       new ButtonBuilder()

@@ -3,7 +3,7 @@ import {ModalSubmitInteraction} from "discord.js";
 import {BotClient} from "../../lib/discord/Client";
 
 export default class BanUserModal implements IFeature<ModalSubmitInteraction> {
-  name = 'BanUserModal';
+  name = 'BanModal';
   run = async ({interaction, client}: { interaction: ModalSubmitInteraction, client: BotClient }) => {
     const id = interaction.customId.split('_')[1];
     const type = interaction.customId.split('_')[2];
@@ -15,6 +15,9 @@ export default class BanUserModal implements IFeature<ModalSubmitInteraction> {
       await client.moderatorUsecase.shadowBan(id, reason);
     }
 
-    await interaction.reply('Пользователь был забанен');
+    await interaction.reply({
+      ephemeral: true,
+      content: 'Пользователь забанен'
+    });
   };
 }
