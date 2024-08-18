@@ -9,7 +9,7 @@ export default class ShadowBanButton implements IFeature<ButtonInteraction> {
     const id = interaction.message.embeds[0].footer!.text;
 
     const modal = new ModalBuilder()
-      .setCustomId('BanUserModal_' + id + '_' + 'shadow')
+      .setCustomId('BanModal_' + id + '_' + 'shadow')
       .setTitle('Бан пользователя')
       .addComponents(
         new ActionRowBuilder<TextInputBuilder>()
