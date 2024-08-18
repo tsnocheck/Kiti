@@ -6,7 +6,7 @@ export default class ReportMenu implements IFeature<StringSelectMenuInteraction>
   name = 'ReportMenu';
 
   async run({interaction, client}: { interaction: StringSelectMenuInteraction, client: BotClient }) {
-    const channelId = '882197686193881148';
+    const channelId = '1273697633684291637';
 
     const id = interaction.customId.split('_')[1];
 
