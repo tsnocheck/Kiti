@@ -1,7 +1,3 @@
-import axios, { AxiosResponse } from 'axios';
-import FormData from 'form-data';
-import path from 'path';
-
 export default async function getUserId(
   customId: string,
 ): Promise<String> {
