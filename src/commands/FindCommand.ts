@@ -5,7 +5,7 @@ import {BotClient} from "../lib/discord/Client";
 export default class FindCommand implements ICommand {
   name = 'find';
   description = 'Поиск анкет';
-  preconditions = ['CheckForm'];
+  preconditions = ['CheckForm', 'AppealForm'];
 
   async run({interaction, client}: { interaction: CommandInteraction, client: BotClient }) {
     let usecases = client.userUsecase;
