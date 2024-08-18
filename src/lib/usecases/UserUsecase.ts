@@ -13,6 +13,7 @@ export interface CreateFormDto {
   age: number;
   status?: string;
   photo?: string;
+  findSex?: number;
 }
 
 export class UserUsecase {
@@ -36,8 +37,7 @@ export class UserUsecase {
 
   async getRandomForm() {
     const count = await this.users.countDocuments();
-
-    return this.users.findOne().skip(Math.round(Math.random() * count));
+    return this.users.findOne({banned: {$ne: true}, shadowBanned: {$ne: true}}).skip(Math.round(Math.random() * count));
   }
 
   async like(userId: string, likedUser: string): Promise<boolean> {
