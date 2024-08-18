@@ -19,7 +19,7 @@ export default class CheckForm implements IPrecondition {
       let button = new ActionRowBuilder<ButtonBuilder>()
         .addComponents(
           new ButtonBuilder()
-            .setCustomId('createForm')
+            .setCustomId('CreateFormButton')
             .setLabel('Создать анкету')
             .setStyle(ButtonStyle.Success)
         );
@@ -28,8 +28,12 @@ export default class CheckForm implements IPrecondition {
         .setTitle('Анкета')
         .setColor(0x2b2d31)
         .setDescription('**Создавая анкету вы автоматически подписываете [Пользовательское соглашение](https://docs.google.com/document/d/1pnNdL2rUVqurlKscDZNy-ABdPw-ZfDdQXOlo6kwnxvM/edit#heading=h.czgykm6tiowt) и [Политику конфиденциальности](https://docs.google.com/document/d/1IVsThKB01CVMeXI551f5LfdV-ICi0-1_ydPyNukVB3c/edit#heading=h.w7quzb7fkv1l)**');
-      await (interaction as RepliableInteraction).reply({embeds: [embed], components: [button]});
+      await (interaction as RepliableInteraction).reply({embeds: [embed], components: [button], fetchReply: true});
       return false;
+    }
+    if(user.banned){
+      await (interaction as RepliableInteraction).reply({content:'К сожалению вы находитесь в бане за нарушения правил использования ботом. Для разбана обратитесь на сервер разработки.', ephemeral:true});
+      return false
     }
     return true;
   }
