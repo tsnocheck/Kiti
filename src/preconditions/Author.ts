@@ -10,7 +10,7 @@ export default class AuthorPrecondition implements IPrecondition {
 
     if (interaction.isMessageComponent()) {
       if (interaction.message.interaction?.user.id != interaction.user.id) {
-        await (interaction as RepliableInteraction).reply({content: 'Не ваше меню', ephemeral: true});
+        await interaction.reply({content: 'Не ваше меню', ephemeral: true});
         return false;
       }
     }
