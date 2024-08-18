@@ -1,6 +1,6 @@
 import type {BotClient} from '../lib/discord/Client';
 import {IPrecondition} from "../lib/discord/Precondition";
-import {BaseInteraction, RepliableInteraction} from 'discord.js';
+import {BaseInteraction} from 'discord.js';
 
 export default class AuthorPrecondition implements IPrecondition {
   name = 'AuthorPrecondition';

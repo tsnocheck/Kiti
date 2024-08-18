@@ -17,9 +17,9 @@ export default class CreateAppealFormButton implements IFeature<ButtonInteractio
       .setRequired(true)
       .setPlaceholder('Например: Меня забанили по случайности')
       .setStyle(TextInputStyle.Paragraph);
-    
+
     const appealActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(appealInput);
-    
+
     modal.addComponents(appealActionRow);
     await interaction.showModal(modal);
   }

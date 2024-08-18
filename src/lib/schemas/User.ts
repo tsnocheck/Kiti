@@ -33,7 +33,7 @@ class User {
 
   @prop({default: false})
   public banned!: boolean;
-  
+
   @prop({enum: Gender})
   public findEnum!: Gender;
 

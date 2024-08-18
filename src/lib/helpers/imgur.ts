@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, {AxiosResponse} from 'axios';
 import FormData from 'form-data';
 import path from 'path';
 
@@ -9,7 +9,7 @@ export default async function uploadImage(
   description: string = 'This is a simple image upload in Imgur'
 ): Promise<void> {
   try {
-    const response: AxiosResponse = await axios.get(imageUrl, { responseType: 'stream' });
+    const response: AxiosResponse = await axios.get(imageUrl, {responseType: 'stream'});
     const imageStream = response.data;
 
     const form = new FormData();
@@ -29,8 +29,8 @@ export default async function uploadImage(
     };
 
     const uploadResponse: AxiosResponse = await axios(config);
-    return uploadResponse.data.data.link
+    return uploadResponse.data.data.link;
   } catch (error: any) {
-    return error
+    return error;
   }
 }

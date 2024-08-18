@@ -34,9 +34,9 @@ export class UserUsecase {
   async findByUserId(userId: string) {
     return this.users.findOne({userId: userId}).exec();
   }
-  
+
   async unbannedUser(userId: string) {
-    await this.likes.findOneAndUpdate({userId}, { banned: false }, {new: true, upsert: true});
+    await this.likes.findOneAndUpdate({userId}, {banned: false}, {new: true, upsert: true});
     return true;
   }
 

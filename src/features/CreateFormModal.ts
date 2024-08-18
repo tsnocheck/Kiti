@@ -1,45 +1,38 @@
-import type { BotClient } from '../lib/discord/Client'
+import type {BotClient} from '../lib/discord/Client';
 import {IFeature} from "../lib/discord/Feature";
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  EmbedBuilder, Message,
-  type MessageCollectorOptions,
-  ModalSubmitInteraction
-} from 'discord.js'
-import imgur from '../lib/helpers/imgur'
+import {EmbedBuilder, Message, ModalSubmitInteraction} from 'discord.js';
+import imgur from '../lib/helpers/imgur';
 
 export default class CreateFormModal implements IFeature<ModalSubmitInteraction> {
   name = "CreateFormModal";
 
-  async run({interaction, client}: { interaction: ModalSubmitInteraction, client:BotClient }): Promise<any> {
+  async run({interaction, client}: { interaction: ModalSubmitInteraction, client: BotClient }): Promise<any> {
     const name = interaction.fields.getTextInputValue('name');
     let age = interaction.fields.getTextInputValue('age');
     const city = interaction.fields.getTextInputValue('city');
     const sex = interaction.fields.getTextInputValue('sex');
     const info = interaction.fields.getTextInputValue('info') || '';
-    
+
     let embed = new EmbedBuilder()
       .setTitle('Анкета')
       .setDescription('Отправьте в чат ваше фото')
-      .setFooter({text:'У вас есть на это 2 минуты'})
-      .setColor(0x2b2d31)
-        
-    await interaction.deferUpdate();
-    await interaction.editReply({ embeds: [embed], components: [] })
+      .setFooter({text: 'У вас есть на это 2 минуты'})
+      .setColor(0x2b2d31);
 
-    let collector = await interaction.channel?.createMessageCollector()
+    await interaction.deferUpdate();
+    await interaction.editReply({embeds: [embed], components: []});
+
+    let collector = await interaction.channel?.createMessageCollector();
     collector?.on('collect', async (message: Message) => {
-      let msg = await message.fetch()
+      let msg = await message.fetch();
       const imageUrl: string | undefined = msg.attachments
         .find(attachment => attachment.contentType?.startsWith('image/'))?.url;
-      
-      if(!imageUrl) return interaction.followUp({content:'Вы отправили не изображение', ephemeral:true})
-      let urlImgur: void = await imgur(imageUrl)
-      await message.delete()
-      
-      let ageMin = Math.min(18, Number(age))
+
+      if (!imageUrl) return interaction.followUp({content: 'Вы отправили не изображение', ephemeral: true});
+      let urlImgur: void = await imgur(imageUrl);
+      await message.delete();
+
+      let ageMin = Math.min(18, Number(age));
       await client.userUsecase.createForm({
         userId: interaction.user.id,
         name: name,
@@ -48,29 +41,29 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
         age: ageMin,
         status: info,
         photo: String(urlImgur)
-      })
+      });
       await interaction.editReply({
-        embeds:[
+        embeds: [
           new EmbedBuilder()
             .setTitle('Анкета')
             .setDescription('Вы успешно создали анкету, для поиска введите команду /find')
             .setColor(0x2b2d31)
             .setTimestamp()
         ]
-      })
-      collector.stop('stop')
+      });
+      collector.stop('stop');
     });
     collector?.on('end', async (reason) => {
-      if(reason) return
+      if (reason) return;
       await interaction.editReply({
-        embeds:[
+        embeds: [
           new EmbedBuilder()
             .setTitle('Анкета')
             .setDescription('К сожалению время вышло, попробуйте еще раз.')
             .setColor(0x2b2d31)
             .setTimestamp()
         ]
-      })
-    })
+      });
+    });
   }
 }
