@@ -14,6 +14,8 @@
     "winston": "^3.14.1"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/form-data": "^2.5.0",
     "discord-api-types": "^0.37.93",
     "typescript": "^5.5.4"
   }

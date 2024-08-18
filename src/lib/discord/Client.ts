@@ -1,6 +1,6 @@
 import {ApplicationCommandDataResolvable, Client, GatewayIntentBits} from "discord.js";
-import {logger} from '../services/logger'
-import {PrometheusClient} from '../prometheus/client'
+import {logger} from '../services/logger';
+import {PrometheusClient} from '../prometheus/client';
 import {ICommand} from "./Command";
 import {IFeature} from "./Feature";
 import * as path from "node:path";
@@ -9,14 +9,18 @@ import {createClient, RedisClientType} from "redis";
 import {Registry} from "./Registry";
 import {IPrecondition} from "./Precondition";
 import * as process from "node:process";
+import {UserUsecase} from '../usecases/UserUsecase';
+import {ModeratorUsecase} from "../usecases/ModeratorUsecase";
 
 class BotClient extends Client {
   commands: Map<string, ICommand>;
   features: Map<string, IFeature<unknown>>;
-  preconditions: Map<string, IPrecondition>
+  preconditions: Map<string, IPrecondition>;
   registry: Registry;
   metrics: PrometheusClient;
   redis?: RedisClientType;
+  userUsecase: UserUsecase;
+  moderatorUsecase: ModeratorUsecase;
 
   constructor() {
     super({
@@ -37,60 +41,62 @@ class BotClient extends Client {
         GatewayIntentBits.DirectMessageTyping
       ],
     });
-    this.metrics = new PrometheusClient()
+    this.metrics = new PrometheusClient();
     this.commands = new Map<string, ICommand>();
     this.features = new Map<string, IFeature<unknown>>();
     this.preconditions = new Map<string, IPrecondition>();
     this.registry = new Registry(this);
     this.redis = undefined;
+    this.userUsecase = new UserUsecase(this);
+    this.moderatorUsecase = new ModeratorUsecase(this);
   }
 
   public async build(token: string) {
     try {
-      logger.info('Logging to client..')
-      await super.login(token)
-      logger.info('Success login to client..')
+      logger.info('Logging to client..');
+      await super.login(token);
+      logger.info('Success login to client..');
     } catch (e) {
-      logger.error(e)
-      process.exit(1)
+      logger.error(e);
+      process.exit(1);
     }
 
     try {
-      await this.connectToDatabase(process.env.MONGOURI!)
+      await this.connectToDatabase(process.env.MONGOURI!);
     } catch (e) {
-      logger.error(e)
-      process.exit(1)
+      logger.error(e);
+      process.exit(1);
     }
 
     try {
-      logger.info('Connecting to redis..')
+      logger.info('Connecting to redis..');
       this.redis = createClient({
         url: `redis://redis:6379/0`
-      })
-      await this.redis.connect()
-      logger.info('Success connect to redis..')
+      });
+      await this.redis.connect();
+      logger.info('Success connect to redis..');
     } catch (e) {
-      logger.error(`Failed connect to redis... ${e}`)
-      process.exit(1)
+      logger.error(`Failed connect to redis... ${e}`);
+      process.exit(1);
     }
 
     try {
-      logger.info('Register events and commands..')
-      await this.registry.registerCommands(path.join(__dirname, '../..', 'commands'))
-      await this.registry.registerEvents(path.join(__dirname, '../..', 'events'))
-      await this.registry.registerFeatures(path.join(__dirname, '../..', 'features'))
-      await this.registry.registerPreconditions(path.join(__dirname, '../..', 'preconditions'))
-      logger.info('Successfully registered events and commands..')
+      logger.info('Register events and commands..');
+      await this.registry.registerCommands(path.join(__dirname, '../..', 'commands'));
+      await this.registry.registerEvents(path.join(__dirname, '../..', 'events'));
+      await this.registry.registerFeatures(path.join(__dirname, '../..', 'features'));
+      await this.registry.registerPreconditions(path.join(__dirname, '../..', 'preconditions'));
+      logger.info('Successfully registered events and commands..');
     } catch (e) {
-      logger.error(e)
-      process.exit(1)
+      logger.error(e);
+      process.exit(1);
     }
 
     try {
-      logger.info('Loading commands to Discord API..')
-      await this.__loadCommands(process.env.MODE!)
+      logger.info('Loading commands to Discord API..');
+      await this.__loadCommands(process.env.MODE!);
     } catch (e) {
-      logger.error('Failed to load commands to Discord API: ' + e)
+      logger.error('Failed to load commands to Discord API: ' + e);
     }
   }
 
@@ -107,10 +113,10 @@ class BotClient extends Client {
 
   private async __loadCommands(mode: string) {
     if (mode === 'prod') {
-      await this.application!.commands.set(this.__convertCommands())
+      await this.application!.commands.set(this.__convertCommands());
     } else {
       const guild = await this.guilds.fetch(process.env.DEV_GUILDID!);
-      await guild.commands.set(this.__convertCommands())
+      await guild.commands.set(this.__convertCommands());
     }
   }
 
@@ -118,10 +124,10 @@ class BotClient extends Client {
     const commands: ApplicationCommandDataResolvable[] = [];
 
     for (const command of this.commands.values()) {
-      commands.push({name: command.name, description: command.description, options: command.options || []})
+      commands.push({name: command.name, description: command.description, options: command.options || []});
     }
-    return commands
+    return commands;
   }
 }
 
-export {BotClient}
+export {BotClient};

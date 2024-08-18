@@ -6,4 +6,7 @@ export interface IPrecondition {
   run: PreconditionRun;
 }
 
-type PreconditionRun = ({interaction, client}: { interaction: BaseInteraction, client: BotClient }) => boolean | Promise<boolean>;
+type PreconditionRun = ({interaction, client}: {
+  interaction: BaseInteraction,
+  client: BotClient
+}) => boolean | Promise<boolean>;
