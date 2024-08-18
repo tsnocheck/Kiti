@@ -8,7 +8,7 @@ export default class BanUserModal implements IFeature<ModalSubmitInteraction> {
     const id = interaction.customId.split('_')[1];
     const type = interaction.customId.split('_')[2];
     const reason = interaction.fields.getTextInputValue('reason');
-    console.log(interaction.customId, type)
+
     if (type === 'permanent') {
       await client.moderatorUsecase.ban(id, reason);
     } else {
