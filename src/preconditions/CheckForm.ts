@@ -31,10 +31,6 @@ export default class CheckForm implements IPrecondition {
       await (interaction as RepliableInteraction).reply({embeds: [embed], components: [button], fetchReply: true});
       return false;
     }
-    if(user.banned){
-      await (interaction as RepliableInteraction).reply({content:'К сожалению вы находитесь в бане за нарушения правил использования ботом. Для разбана обратитесь на сервер разработки.', ephemeral:true});
-      return false
-    }
     return true;
   }
 }
