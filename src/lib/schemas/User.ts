@@ -1,5 +1,11 @@
 import {prop} from '@typegoose/typegoose';
 
+enum Gender {
+  Male = 0,
+  Female = 1,
+  Gay = 2
+}
+
 class User {
   @prop({required: true})
   public userId!: string;
@@ -22,11 +28,14 @@ class User {
   @prop({default: ''})
   public status?: string;
 
-  @prop({required: true})
+  @prop()
   public photo!: string;
 
   @prop({default: false})
   public banned!: boolean;
+  
+  @prop({enum: Gender})
+  public findEnum!: Gender;
 
   @prop({default: false})
   public shadowBanned!: boolean;
