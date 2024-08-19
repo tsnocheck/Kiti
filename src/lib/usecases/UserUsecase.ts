@@ -40,18 +40,42 @@ export class UserUsecase {
     return true;
   }
 
-  async getRandomForm() {
-    const count = await this.users.countDocuments();
-    return this.users.findOne({banned: {$ne: true}, shadowBanned: {$ne: true}}).skip(Math.round(Math.random() * count));
+  //TODO: Сделать так, чтобы они не повторялись
+  async getRandomForm(Id: string) {
+    const count = await this.users.countDocuments({banned: {$ne: true}, shadowBanned: {$ne: true}});
+    let number = Math.floor(Math.random() * count);
+    const usersArray = await this.users.find({banned: {$ne: true}, shadowBanned: {$ne: true}})
+    
+    while (usersArray[number].userId === Id) {
+      number = Math.floor(Math.random() * count);
+    }
+
+    return usersArray[number];
+  }
+  
+  async getFormForUserId(userId: string) {
+    return this.users.findOne({userId});
+  }
+  
+  async getFormForObjectId(objectId: any) {
+    return this.users.findOne({_id: objectId});
+  }
+  
+  async getLikesForm(userId: string) {
+    return this.likes.findOne({userId: userId});
   }
 
   async like(userId: string, likedUser: string): Promise<boolean> {
     let user = await this.findByUserId(userId);
     let member = await this.findByUserId(likedUser);
-    await this.likes.findOneAndUpdate({userId}, {$push: {likedTo: user}}, {new: true, upsert: true});
-    await this.likes.findOneAndUpdate({userId: likedUser}, {$push: {likedBy: member}}, {new: true, upsert: true});
+    await this.likes.findOneAndUpdate({userId}, {$push: {likedTo: member}}, {new: true, upsert: true});
+    await this.likes.findOneAndUpdate({userId: likedUser}, {$push: {likedBy: user}}, {new: true, upsert: true});
 
     return true;
+  }
+  
+  async deleteLikedToForm(objectId: any, userId: string): Promise<boolean> {
+    return this.likes.findOneAndUpdate({userId}, {$pull: {likedTo: objectId}}, {new: true, upsert: true});
   }
 
   async report(formId: string): Promise<boolean> {
