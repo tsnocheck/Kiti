@@ -1,5 +1,12 @@
 import {ICommand} from "../lib/discord/Command";
-import {ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, EmbedBuilder} from 'discord.js';
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  CommandInteraction,
+  EmbedBuilder,
+  RepliableInteraction
+} from 'discord.js'
 import {BotClient} from "../lib/discord/Client";
 
 export default class FindCommand implements ICommand {
@@ -8,9 +15,14 @@ export default class FindCommand implements ICommand {
   preconditions = ['CheckForm', 'AppealForm'];
 
   async run({interaction, client}: { interaction: CommandInteraction, client: BotClient }) {
-    let usecases = client.userUsecase;
-    let form = await usecases.getRandomForm();
-
+    let form = await client.userUsecase.getRandomForm(interaction.user.id);
+    
+    if (interaction.deferred || interaction.replied) return;
+    if(form == undefined){
+      await interaction.reply({content:'К сожалению нет активных анкет', ephemeral:true})
+      return
+    }
+    
     let embed = new EmbedBuilder()
       .setTitle('Анкета')
       .setDescription(`
@@ -24,12 +36,13 @@ export default class FindCommand implements ICommand {
       .addComponents(
         new ButtonBuilder()
           .setCustomId(`LikeButton_${form?.userId}`)
-          .setEmoji('<:likeMessageIcon:1273558952235241557>')
+          .setEmoji('<:likeIcon:1273558975966744620>')
           .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
           .setCustomId(`MessageLikeButton_${form?.userId}`)
-          .setEmoji('<:likeIcon:1273558975966744620>')
-          .setStyle(ButtonStyle.Secondary),
+          .setEmoji('<:likeMessageIcon:1273558952235241557>')
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(true),
         new ButtonBuilder()
           .setCustomId(`DisLikeButton_${form?.userId}`)
           .setEmoji('<:dislikeIcon:1273559004014055497>')
