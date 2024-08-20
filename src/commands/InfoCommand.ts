@@ -14,6 +14,8 @@ export default class InfoCommand implements ICommand {
         Здесь вы можете найти себе от друга до второй половинки.
         Анкеты - лучший способ найти человека из пользователей Discord.
         Создайте свою и начните поиск новых знакомств!
+        
+        Разработчики: <@751866920608727060>, <@232476435451740160>
       `)
       .setThumbnail(interaction.client.user.avatarURL({size: 512, extension: 'png'}))
       .setFooter({
