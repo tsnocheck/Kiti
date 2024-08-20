@@ -22,7 +22,9 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
     await interaction.deferUpdate();
     await interaction.editReply({embeds: [embed], components: []});
 
-    let collector = await interaction.channel?.createMessageCollector();
+    const filter = (msg: Message) => msg.author.id === interaction.user.id;
+
+    let collector = interaction.channel?.createMessageCollector({filter});
     collector?.on('collect', async (message: Message) => {
       let msg = await message.fetch();
       const imageUrl: string | undefined = msg.attachments
@@ -32,7 +34,7 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
       let urlImgur: void = await imgur(imageUrl);
       await message.delete();
 
-      let ageMin = Math.max(18, parseInt(age));
+      let ageMin = Math.max(18, isNaN(parseInt(age)) ? 18 : parseInt(age));
       await client.userUsecase.createForm({
         userId: interaction.user.id,
         name: name,
