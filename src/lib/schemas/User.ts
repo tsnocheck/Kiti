@@ -42,6 +42,9 @@ class User {
 
   @prop({default: ''})
   public banReason!: string;
+
+  @prop({default: []})
+  public viewed!: string[];
 }
 
 export {User};

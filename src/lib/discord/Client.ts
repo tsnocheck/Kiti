@@ -71,7 +71,7 @@ class BotClient extends Client {
     try {
       logger.info('Connecting to redis..');
       this.redis = createClient({
-        url: `redis://redis:6379/0`
+        url: process.env.REDIS_URL!
       });
       await this.redis.connect();
       logger.info('Success connect to redis..');

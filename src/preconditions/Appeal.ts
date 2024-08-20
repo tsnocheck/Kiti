@@ -29,7 +29,8 @@ export default class AppealForm implements IPrecondition {
         .setDescription('**К сожалению ваша анкета находится в бане, но вы можете подать апелляцию на разбан.**');
       await (interaction as RepliableInteraction).reply({embeds: [embed], components: [button], fetchReply: true});
       return false;
+    }else{
+      return true;
     }
-    return true;
   }
 }
