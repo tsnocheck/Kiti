@@ -30,7 +30,7 @@ export default async function uploadImage(
 
     const uploadResponse: AxiosResponse = await axios(config);
     return uploadResponse.data.data.link;
-  } catch (error: any) {
-    return error;
+  } catch {
+    return undefined
   }
 }

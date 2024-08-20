@@ -1,3 +1,4 @@
+import { error } from 'winston'
 import type {BotClient} from '../lib/discord/Client';
 import {IFeature} from "../lib/discord/Feature";
 import {EmbedBuilder, Message, ModalSubmitInteraction} from 'discord.js';
@@ -32,6 +33,7 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
 
       if (!imageUrl) return interaction.followUp({content: 'Вы отправили не изображение', ephemeral: true});
       let urlImgur: void = await imgur(imageUrl);
+      if(urlImgur == undefined) return interaction.followUp({content: 'Не удалось загрузить фото, попробуйте еще раз', ephemeral: true});
       await message.delete();
 
       let ageMin = Math.max(18, isNaN(parseInt(age)) ? 18 : parseInt(age));
