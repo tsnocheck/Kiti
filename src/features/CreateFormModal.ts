@@ -32,7 +32,7 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
       let urlImgur: void = await imgur(imageUrl);
       await message.delete();
 
-      let ageMin = Math.min(18, Number(age));
+      let ageMin = Math.max(18, parseInt(age));
       await client.userUsecase.createForm({
         userId: interaction.user.id,
         name: name,
