@@ -1,12 +1,12 @@
 import {IFeature} from "../lib/discord/Feature";
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder } from 'discord.js'
+import {ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder} from 'discord.js';
 import {BotClient} from "../lib/discord/Client";
 
 export default class DislikeBtn implements IFeature<ButtonInteraction> {
   name = "DislikeBtn";
 
   async run({interaction, client}: { interaction: ButtonInteraction, client: BotClient }): Promise<any> {
-    const likesForm = await client.userUsecase.getFormForUserId(interaction.customId.split('_')[1])
+    const likesForm = await client.userUsecase.findByUserId(interaction.customId.split('_')[1]);
     const likes = await client.userUsecase.getLikesForm(interaction.user.id)
     
     await client.userUsecase.deleteLikedToForm(likesForm?._id, interaction.user.id)
