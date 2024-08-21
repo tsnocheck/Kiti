@@ -25,7 +25,7 @@ export default class AppealForm implements IPrecondition {
 
       let embed = new EmbedBuilder()
         .setTitle('Анкета')
-        .setColor(0x2b2d31)
+        .setColor('#bbffd3')
         .setDescription('**К сожалению ваша анкета находится в бане, но вы можете подать апелляцию на разбан.**');
       await (interaction as RepliableInteraction).reply({embeds: [embed], components: [button], fetchReply: true});
       return false;

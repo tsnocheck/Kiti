@@ -35,7 +35,7 @@ export default class ReportMenu implements IFeature<StringSelectMenuInteraction>
         ${form?.name}, ${form?.age}, ${form?.city}
         ${form?.status}
       `)
-      .setColor(0x2b2d31)
+      .setColor('#bbffd3')
       .setFooter({
         text: id
       })

@@ -16,7 +16,7 @@ export default class AcceptAppeal implements IFeature<ButtonInteraction> {
           new EmbedBuilder()
             .setTitle('Анкета')
             .setDescription(`Ваша анкета была разблокирована, теперь вы можете дальше пользоваться ботом!`)
-            .setColor(0x2b2d31)
+            .setColor('#bbffd3')
             .setTimestamp()
         ]
       });

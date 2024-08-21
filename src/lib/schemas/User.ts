@@ -1,4 +1,5 @@
 import {prop} from '@typegoose/typegoose';
+import {Types} from "mongoose";
 
 enum Gender {
   Male = 0,
@@ -43,7 +44,7 @@ class User {
   @prop({default: ''})
   public banReason!: string;
 
-  @prop({default: []})
+  @prop({default: [], type: Types.Array})
   public viewed!: string[];
 }
 

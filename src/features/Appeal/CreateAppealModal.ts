@@ -21,7 +21,7 @@ export default class CreateAppealModal implements IFeature<ModalSubmitInteractio
       .setTitle('Аппеляция')
       .setDescription(`Текст апелляции:\n \`\`\`${appealText}\`\`\``)
       .setImage('https://cdn.discordapp.com/attachments/772218365413818428/1079003352408543302/11112.png?ex=66c32dae&is=66c1dc2e&hm=bd3376a85cd96997b02c0d714b0a5c5d1c1dded3fd3d4336c56ead70fbc09929&')
-      .setColor(0x2b2d31)
+      .setColor('#bbffd3')
       .setTimestamp();
 
     let embedTwo = new EmbedBuilder()
@@ -30,7 +30,7 @@ export default class CreateAppealModal implements IFeature<ModalSubmitInteractio
         ${form?.name}, ${form?.age}, ${form?.city}
         ${form?.status}
       `)
-      .setColor(0x2b2d31)
+      .setColor('#bbffd3')
       .setImage(form?.photo || null);
 
     let button = new ActionRowBuilder<ButtonBuilder>()

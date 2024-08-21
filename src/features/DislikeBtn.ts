@@ -7,15 +7,13 @@ export default class DislikeBtn implements IFeature<ButtonInteraction> {
 
   async run({interaction, client}: { interaction: ButtonInteraction, client: BotClient }): Promise<any> {
     const likesForm = await client.userUsecase.findByUserId(interaction.customId.split('_')[1]);
-    const likes = await client.userUsecase.getLikesForm(interaction.user.id)
-    
-    await client.userUsecase.deleteLikedToForm(likesForm?._id, interaction.user.id)
-    
-    if(!likes?.likedTo || likes.likedTo.length === 0) {
-      await interaction.update({components:[]})
-      await interaction.followUp({content:'К сожалению анкеты кончились, попробуйте позже', ephemeral:true})
+
+    const likes = await client.userUsecase.deleteLikedByForm(likesForm!.userId, interaction.user.id);
+
+    if (!likes?.likedBy || likes.likedBy.length === 0) {
+      await interaction.update({components: [], content: 'К сожалению анкеты кончились, попробуйте позже', embeds: []});
     }else{
-      const likedToForm = await client.userUsecase.getFormForObjectId(likes?.likedTo[0])
+      const likedToForm = await client.userUsecase.getFormForObjectId(likes?.likedBy[0]._id);
       
       const embed = new EmbedBuilder()
         .setTitle('Анкета')
@@ -25,7 +23,7 @@ export default class DislikeBtn implements IFeature<ButtonInteraction> {
         ${likedToForm?.name}, ${likedToForm?.age}, ${likedToForm?.city}
         ${likedToForm?.status}
       `)
-        .setColor(0x2b2d31)
+        .setColor('#bbffd3')
         .setImage(likedToForm?.photo || null);
       
       let button = new ActionRowBuilder<ButtonBuilder>()

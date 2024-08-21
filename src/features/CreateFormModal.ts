@@ -17,7 +17,7 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
       .setTitle('Анкета')
       .setDescription('Отправьте в чат ваше фото')
       .setFooter({text: 'У вас есть на это 2 минуты'})
-      .setColor(0x2b2d31);
+      .setColor('#bbffd3');
 
     await interaction.deferUpdate();
     await interaction.editReply({embeds: [embed], components: []});
@@ -49,7 +49,7 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
           new EmbedBuilder()
             .setTitle('Анкета')
             .setDescription('Вы успешно создали анкету, для поиска введите команду /find')
-            .setColor(0x2b2d31)
+            .setColor('#bbffd3')
             .setTimestamp()
         ]
       });
@@ -62,7 +62,7 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
           new EmbedBuilder()
             .setTitle('Анкета')
             .setDescription('К сожалению время вышло, попробуйте еще раз.')
-            .setColor(0x2b2d31)
+            .setColor('#bbffd3')
             .setTimestamp()
         ]
       });

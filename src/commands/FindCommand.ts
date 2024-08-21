@@ -1,12 +1,5 @@
 import {ICommand} from "../lib/discord/Command";
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  CommandInteraction,
-  EmbedBuilder,
-  RepliableInteraction
-} from 'discord.js'
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, EmbedBuilder} from 'discord.js';
 import {BotClient} from "../lib/discord/Client";
 
 export default class FindCommand implements ICommand {
@@ -29,7 +22,7 @@ export default class FindCommand implements ICommand {
         ${form?.name}, ${form?.age}, ${form?.city}
         ${form?.status}
       `)
-      .setColor(0x2b2d31)
+      .setColor('#bbffd3')
       .setImage(form?.photo || null);
 
     const buttons = new ActionRowBuilder<ButtonBuilder>()
