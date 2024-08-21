@@ -52,10 +52,9 @@ export default class LikeBtn implements IFeature<ButtonInteraction> {
     const authorLikes = await client.userUsecase.deleteLikedByForm(likedByUser!.userId, interaction.user.id);
 
     if (!authorLikes?.likedBy || authorLikes.likedBy.length === 0) {
-      await interaction.editReply({
+      await interaction.followUp({
         content: 'К сожалению анкеты кончились, попробуйте позже',
-        components: [],
-        embeds: []
+        ephemeral: true
       });
     }else{
       let likedToForm = await client.userUsecase.getFormForObjectId(authorLikes?.likedBy[0]._id);
@@ -83,7 +82,7 @@ export default class LikeBtn implements IFeature<ButtonInteraction> {
             .setStyle(ButtonStyle.Danger),
         )
 
-      await interaction.editReply({embeds: [embed], components: [button]});
+      await interaction.followUp({embeds: [embed], components: [button]});
     }
   }
 }
