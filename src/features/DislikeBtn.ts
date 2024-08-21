@@ -11,7 +11,11 @@ export default class DislikeBtn implements IFeature<ButtonInteraction> {
     const likes = await client.userUsecase.deleteLikedByForm(likesForm!.userId, interaction.user.id);
 
     if (!likes?.likedBy || likes.likedBy.length === 0) {
-      await interaction.update({components: [], content: 'К сожалению анкеты кончились, попробуйте позже', embeds: []});
+      await interaction.followUp({
+        components: [],
+        content: 'К сожалению анкеты кончились, попробуйте позже',
+        embeds: []
+      });
     }else{
       const likedToForm = await client.userUsecase.getFormForObjectId(likes?.likedBy[0]._id);
       
