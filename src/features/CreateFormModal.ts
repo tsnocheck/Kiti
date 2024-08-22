@@ -36,7 +36,7 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
       if(urlImgur == undefined) return interaction.followUp({content: 'Не удалось загрузить фото, попробуйте еще раз', ephemeral: true});
       await message.delete();
 
-      let ageMin = Math.max(18, isNaN(parseInt(age)) ? 18 : parseInt(age));
+      let ageMin = Math.min(Math.max(18, isNaN(parseInt(age)) ? 18 : parseInt(age)), 70)
       await client.userUsecase.createForm({
         userId: interaction.user.id,
         name: name,
