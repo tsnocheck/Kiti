@@ -1,6 +1,8 @@
 dist/
 node_modules
 .env
+.env.docker
 .idea
 package-lock.json
 combined.log
+logs/

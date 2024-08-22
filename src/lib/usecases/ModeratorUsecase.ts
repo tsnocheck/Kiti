@@ -23,4 +23,8 @@ export class ModeratorUsecase {
   async unban(userId: string) {
     await this.users.findOneAndUpdate({userId: userId}, {banned: false, shadowBanned: false}, {upsert: true}).exec();
   }
+
+  async disableReports(userId: string) {
+    await this.users.findOneAndUpdate({userId: userId}, {disabledReports: true}, {upsert: true}).exec();
+  }
 }

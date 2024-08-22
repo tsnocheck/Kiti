@@ -1,33 +1,32 @@
-import {IFeature} from "../lib/discord/Feature";
+import {IFeature} from "../../lib/discord/Feature";
 import {ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, type User} from 'discord.js';
-import {BotClient} from "../lib/discord/Client";
+import {BotClient} from "../../lib/discord/Client";
 
 export default class LikeBtn implements IFeature<ButtonInteraction> {
   name = "LikeBtn";
 
   async run({interaction, client}: { interaction: ButtonInteraction, client: BotClient }): Promise<any> {
-    let likesForm = await client.userUsecase.findByUserId(interaction.customId.split('_')[1]);
-    let form = await client.userUsecase.findByUserId(interaction.user.id);
-    let likes = await client.userUsecase.getLikesForm(interaction.user.id)
-    
+    let likedByUser = await client.userUsecase.findByUserId(interaction.customId.split('_')[1]);
+    let author = await client.userUsecase.findByUserId(interaction.user.id);
+
     const member: User = await client.users.fetch(interaction.customId.split('_')[1]) as User;
     
     let emb = new EmbedBuilder()
       .setTitle('Анкета')
       .setDescription(`
-        **У вас взаимная симпатия! Надеюсь хорошо проведете время ;) Начинай общаться 👉 <@${likesForm?.userId}>**
+        **У вас взаимная симпатия! Надеюсь хорошо проведете время ;) Начинай общаться 👉 <@${likedByUser?.userId}>**
         
-        ${likesForm?.name}, ${likesForm?.age}, ${likesForm?.city}
-        ${likesForm?.status}
+        ${likedByUser?.name}, ${likedByUser?.age}, ${likedByUser?.city}
+        ${likedByUser?.status}
       `)
-      .setColor(0x2b2d31)
-      .setImage(likesForm?.photo || null);
+      .setColor('#bbffd3')
+      .setImage(likedByUser?.photo || null);
     
     let userRow = new ActionRowBuilder<ButtonBuilder>() //чел который лайкнул через /like
     let likesRow = new ActionRowBuilder<ButtonBuilder>() //чел который лайкнул через /find
     
     let button = new ButtonBuilder()
-      .setURL(`https://discord.com/users/${likesForm?.userId}`)
+      .setURL(`https://discord.com/users/${likedByUser?.userId}`)
       .setEmoji('<:sendIcon:1275114387786694749>')
       .setStyle(ButtonStyle.Link)
     
@@ -41,20 +40,24 @@ export default class LikeBtn implements IFeature<ButtonInteraction> {
     
     emb
       .setDescription(`
-        **У вас взаимная симпатия! Надеюсь хорошо проведете время ;) Начинай общаться 👉 <@${form?.userId}>**
+        **У вас взаимная симпатия! Надеюсь хорошо проведете время ;) Начинай общаться 👉 <@${author?.userId}>**
         
-        ${form?.name}, ${form?.age}, ${form?.city}
-        ${form?.status}
+        ${author?.name}, ${author?.age}, ${author?.city}
+        ${author?.status}
       `)
-      .setImage(form?.photo || null);
+      .setImage(author?.photo || null);
     
     await member?.send({embeds:[emb], components:[likesRow]})
-    await client.userUsecase.deleteLikedToForm(likesForm?._id, interaction.user.id)
-    
-    if(!likes?.likedTo || likes.likedTo.length === 0) {
-      await interaction.followUp({content:'К сожалению анкеты кончились, попробуйте позже', ephemeral:true})
+    await client.userUsecase.addViewed(interaction.user.id, likedByUser!.userId);
+    const authorLikes = await client.userUsecase.deleteLikedByForm(likedByUser!.userId, interaction.user.id);
+
+    if (!authorLikes?.likedBy || authorLikes.likedBy.length === 0) {
+      await interaction.followUp({
+        content: 'К сожалению анкеты кончились, попробуйте позже',
+        ephemeral: true
+      });
     }else{
-      let likedToForm = await client.userUsecase.getFormForObjectId(likes?.likedTo[0])
+      let likedToForm = await client.userUsecase.getFormForObjectId(authorLikes?.likedBy[0]._id);
       
       let embed = new EmbedBuilder()
         .setTitle('Анкета')
@@ -64,7 +67,7 @@ export default class LikeBtn implements IFeature<ButtonInteraction> {
         ${likedToForm?.name}, ${likedToForm?.age}, ${likedToForm?.city}
         ${likedToForm?.status}
       `)
-        .setColor(0x2b2d31)
+        .setColor('#bbffd3')
         .setImage(likedToForm?.photo || null);
       
       let button = new ActionRowBuilder<ButtonBuilder>()
@@ -78,8 +81,8 @@ export default class LikeBtn implements IFeature<ButtonInteraction> {
             .setEmoji('<:dislikeIcon:1273559004014055497>')
             .setStyle(ButtonStyle.Danger),
         )
-      
-      await interaction.followUp({embeds:[embed], components:[button]})
+
+      await interaction.followUp({embeds: [embed], components: [button]});
     }
   }
 }

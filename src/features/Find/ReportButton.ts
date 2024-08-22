@@ -1,4 +1,4 @@
-import {IFeature} from "../lib/discord/Feature";
+import {IFeature} from "../../lib/discord/Feature";
 import {ActionRowBuilder, ButtonInteraction, StringSelectMenuBuilder} from "discord.js";
 
 export default class ButtonFeature implements IFeature<ButtonInteraction> {

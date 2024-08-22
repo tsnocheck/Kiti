@@ -1,9 +1,5 @@
-export default async function getUserId(
+export default function getUserId(
   customId: string,
-): Promise<String> {
-  try {
-    return customId.split('_')[1];
-  } catch (error: any) {
-    return error;
-  }
+): string {
+  return customId.split('_')?.[1];
 }

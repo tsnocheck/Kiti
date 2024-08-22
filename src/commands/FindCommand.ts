@@ -1,12 +1,5 @@
 import {ICommand} from "../lib/discord/Command";
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  CommandInteraction,
-  EmbedBuilder,
-  RepliableInteraction
-} from 'discord.js'
+import {ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, EmbedBuilder} from 'discord.js';
 import {BotClient} from "../lib/discord/Client";
 
 export default class FindCommand implements ICommand {
@@ -16,6 +9,7 @@ export default class FindCommand implements ICommand {
 
   async run({interaction, client}: { interaction: CommandInteraction, client: BotClient }) {
     let form = await client.userUsecase.getRandomForm(interaction.user.id);
+    const user = await client.userUsecase.findByUserId(interaction.user.id);
     
     if (interaction.deferred || interaction.replied) return;
     if(form == undefined){
@@ -29,7 +23,7 @@ export default class FindCommand implements ICommand {
         ${form?.name}, ${form?.age}, ${form?.city}
         ${form?.status}
       `)
-      .setColor(0x2b2d31)
+      .setColor('#bbffd3')
       .setImage(form?.photo || null);
 
     const buttons = new ActionRowBuilder<ButtonBuilder>()
@@ -50,7 +44,8 @@ export default class FindCommand implements ICommand {
         new ButtonBuilder()
           .setCustomId(`ReportButton_${form?.userId}`)
           .setEmoji('<:ticketIcon:1273559224940494858>')
-          .setStyle(ButtonStyle.Secondary),
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(user?.disabledReports),
       );
     await interaction.reply({embeds: [embed], components: [buttons]});
   }

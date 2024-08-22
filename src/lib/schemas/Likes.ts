@@ -1,4 +1,4 @@
-import {prop} from "@typegoose/typegoose";
+import {prop, Ref} from "@typegoose/typegoose";
 import {User} from "./User";
 
 export class Likes {
@@ -6,8 +6,8 @@ export class Likes {
   userId!: string;
 
   @prop({ref: () => User})
-  likedBy?: User[];
+  likedBy?: Ref<User>[];
 
   @prop({ref: () => User})
-  likedTo?: User[];
+  likedTo?: Ref<User>[];
 }

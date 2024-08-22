@@ -11,13 +11,13 @@ export default class FindCommand implements ICommand {
     let likesForm = await client.userUsecase.getLikesForm(interaction.user.id)
     
     if (interaction.deferred || interaction.replied) return;
-    
-    if (!likesForm?.likedTo || likesForm.likedTo.length === 0) {
+
+    if (!likesForm?.likedBy || likesForm.likedBy.length === 0) {
       await interaction.reply({content:'К сожалению вас никто еще не лайкнул, попробуйте чуть позже', ephemeral:true})
       return
     }
-    
-    let form = await client.userUsecase.getFormForObjectId(likesForm?.likedTo[0])
+
+    let form = await client.userUsecase.getFormForObjectId(likesForm.likedBy[0]._id);
     let embed = new EmbedBuilder()
       .setTitle('Анкета')
       .setDescription(`
@@ -26,7 +26,7 @@ export default class FindCommand implements ICommand {
         ${form?.name}, ${form?.age}, ${form?.city}
         ${form?.status}
       `)
-      .setColor(0x2b2d31)
+      .setColor('#bbffd3')
       .setImage(form?.photo || null);
     
     let button = new ActionRowBuilder<ButtonBuilder>()

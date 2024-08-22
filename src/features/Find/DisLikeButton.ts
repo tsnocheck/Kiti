@@ -1,6 +1,6 @@
-import {IFeature} from "../lib/discord/Feature";
+import {IFeature} from "../../lib/discord/Feature";
 import {ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder} from 'discord.js';
-import {BotClient} from "../lib/discord/Client";
+import {BotClient} from "../../lib/discord/Client";
 
 export default class DisLikeButton implements IFeature<ButtonInteraction> {
   name = "DisLikeButton";
@@ -12,7 +12,7 @@ export default class DisLikeButton implements IFeature<ButtonInteraction> {
     let err = new EmbedBuilder()
       .setTitle('Анкеты')
       .setDescription('К сожалению активные анкеты кончились. Попробуйте позже.')
-      .setColor(0x2b2d31)
+      .setColor('#bbffd3')
     
     if(!form){
       await interaction.update({embeds:[err], components:[]})
@@ -25,7 +25,7 @@ export default class DisLikeButton implements IFeature<ButtonInteraction> {
         ${form?.name}, ${form?.age}, ${form?.city}
         ${form?.status}
       `)
-        .setColor(0x2b2d31)
+        .setColor('#bbffd3')
         .setImage(form?.photo || null);
 
       const buttons = new ActionRowBuilder<ButtonBuilder>()

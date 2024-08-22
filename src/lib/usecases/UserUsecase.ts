@@ -1,4 +1,4 @@
-import {Document, Model} from "mongoose";
+import {Document, Model, Types} from "mongoose";
 import {User} from "../schemas/User";
 import {getModelForClass} from "@typegoose/typegoose";
 import {Nullable} from "../helpers/types";
@@ -61,7 +61,7 @@ export class UserUsecase {
     return form;
   }
 
-  async getFormForObjectId(objectId: any) {
+  async getFormForObjectId(objectId: Types.ObjectId) {
     return this.users.findOne({_id: objectId}).exec();
   }
 
@@ -72,14 +72,24 @@ export class UserUsecase {
   async like(userId: string, likedUser: string): Promise<boolean> {
     let user = await this.findByUserId(userId);
     let member = await this.findByUserId(likedUser);
-    await this.likes.findOneAndUpdate({userId}, {$push: {likedTo: member}}, {new: true, upsert: true});
-    await this.likes.findOneAndUpdate({userId: likedUser}, {$push: {likedBy: user}}, {new: true, upsert: true});
+    await this.likes.findOneAndUpdate({userId}, {$push: {likedTo: member!._id}}, {new: true, upsert: true});
+    await this.likes.findOneAndUpdate({userId: likedUser}, {$push: {likedBy: user!._id}}, {new: true, upsert: true});
 
     return true;
   }
 
-  async deleteLikedToForm(objectId: any, userId: string): Promise<boolean> {
-    return this.likes.findOneAndUpdate({userId}, {$pull: {likedTo: objectId}}, {new: true, upsert: true});
+  async deleteLikedByForm(likedBy: string, likedUserId: string) {
+    const user = await this.findByUserId(likedUserId);
+    const likedByUser = await this.findByUserId(likedBy);
+    await this.likes.findOneAndUpdate({userId: likedUserId}, {$pull: {likedBy: likedByUser!._id}}, {
+      new: true,
+      upsert: true
+    });
+    return this.likes.findOneAndUpdate({userId: likedBy}, {$pull: {likedTo: user!._id}}, {upsert: true});
+  }
+
+  async addViewed(userId: string, viewedId: string) {
+    return this.users.findOneAndUpdate({userId: userId}, {$push: {viewed: viewedId}});
   }
 
   async report(formId: string): Promise<boolean> {

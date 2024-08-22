@@ -2,6 +2,7 @@ import {InteractionType} from 'discord-api-types/v10';
 import {BaseInteraction, CacheType} from 'discord.js';
 import * as http from 'http';
 import promClient, {Counter, Gauge, PrometheusContentType} from 'prom-client';
+import {logger} from "../services/logger";
 
 class PrometheusClient {
   public registry: promClient.Registry;
@@ -175,9 +176,9 @@ class PrometheusClient {
       await this.gateway.pushAdd({
         jobName: 'stats',
       });
-      console.log('Metrics pushed successfully');
+      logger.info('Metrics pushed successfully');
     } catch (err) {
-      console.error('Failed to push metrics:', err);
+      logger.error('Failed to push metrics:', err);
     }
   }
 }
