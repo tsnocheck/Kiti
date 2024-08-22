@@ -3,6 +3,7 @@ import {User} from "../schemas/User";
 import {getModelForClass} from "@typegoose/typegoose";
 import {Nullable} from "../helpers/types";
 import {Likes} from "../schemas/Likes";
+import {Messages} from "../schemas/Messages";
 import {BotClient} from "../discord/Client";
 import {logger} from "../services/logger";
 
@@ -20,11 +21,13 @@ export interface CreateFormDto {
 export class UserUsecase {
   private users: Model<User>;
   private likes: Model<Likes>;
+  private messages: Model<Messages>;
   private client: BotClient;
 
   constructor(client: BotClient) {
     this.users = getModelForClass(User);
     this.likes = getModelForClass(Likes);
+    this.messages = getModelForClass(Messages);
     this.client = client;
   }
 
@@ -90,6 +93,44 @@ export class UserUsecase {
 
   async addViewed(userId: string, viewedId: string) {
     return this.users.findOneAndUpdate({userId: userId}, {$push: {viewed: viewedId}});
+  }
+  
+  async renameAbout(userId: string, text: string){
+    return this.users.findOneAndUpdate({userId: userId}, {status: text});
+  }
+  
+  async renameImage(userId: string, image: string){
+    return this.users.findOneAndUpdate({userId: userId}, {image: image});
+  }
+  
+  async likeMessage(userId: string, likedUser: string, message: string): Promise<boolean> {
+    let user = await this.findByUserId(userId)
+    let likedUserObj = await this.findByUserId(likedUser)
+      await this.messages.create({
+        to: user?._id,
+        from: likedUserObj?._id,
+        message: message
+      });
+      return true
+  }
+  
+  async recreateForm(userId: string, name: string, sex: string, city: string, year: string, info: string, image: string){
+    const age = Math.min(Math.max(18, isNaN(parseInt(year)) ? 18 : parseInt(year)), 70)
+    return this.users.findOneAndUpdate(
+      {userId: userId},
+      {
+        name: name,
+        sex: sex,
+        city: city,
+        age: age,
+        status: info,
+        image: image
+      });
+  }
+  
+  async renameYear(userId: string, year: string){
+    const age = Math.min(Math.max(18, isNaN(parseInt(year)) ? 18 : parseInt(year)), 70)
+    return this.users.findOneAndUpdate({userId: userId}, {year: age});
   }
 
   async report(formId: string): Promise<boolean> {
