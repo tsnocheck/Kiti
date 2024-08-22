@@ -7,7 +7,7 @@ export default class ReportMenu implements IFeature<StringSelectMenuInteraction>
   name = 'ReportMenu';
 
   async run({interaction, client}: { interaction: StringSelectMenuInteraction, client: BotClient }) {
-    const channelId = '1273697633684291637';
+    const channelId = process.env.REPORTS_CHANNELID!;
 
     const id = interaction.customId.split('_')[1];
 
@@ -48,14 +48,14 @@ export default class ReportMenu implements IFeature<StringSelectMenuInteraction>
 
     if (channel?.isTextBased()) {
       await channel.send({
-        content: `Новый репорт: ${id}\n Причина: ${interaction.component.options.find(i => i.value === interaction.values[0])?.label}`,
+        content: `Новый репорт: ${id}\n Причина: ${interaction.component.options.find(i => i.value === interaction.values[0])?.label}\n Подал репорт: <@${interaction.user.id}>`,
         components: [row],
         embeds: [embed]
       });
     }
 
-    await interaction.reply({
-      ephemeral: true,
+    await interaction.update({
+      components: [],
       content: 'Жалоба успешно отправлена!'
     });
 
