@@ -33,7 +33,7 @@ export default class FindCommand implements ICommand {
           .setEmoji('<:likeIcon:1273558975966744620>')
           .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
-          .setCustomId(`LikeMessageButton_${form?.userId}`)
+          .setCustomId(`MessageLikeButton_${form?.userId}`)
           .setEmoji('<:likeMessageIcon:1273558952235241557>')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(true),

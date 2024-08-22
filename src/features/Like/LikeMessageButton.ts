@@ -10,8 +10,8 @@ import {
 } from 'discord.js'
 import {BotClient} from "../../lib/discord/Client";
 
-export default class LikeMessageButton implements IFeature<ButtonInteraction> {
-  name = "LikeMessageButton";
+export default class MessageLikeButton implements IFeature<ButtonInteraction> {
+  name = "MessageLikeButton";
 
   async run({interaction, client}: { interaction: ButtonInteraction, client: BotClient }): Promise<any> {
     const modal = new ModalBuilder()
