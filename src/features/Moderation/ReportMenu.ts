@@ -1,6 +1,7 @@
 import {IFeature} from "../../lib/discord/Feature";
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, StringSelectMenuInteraction} from "discord.js";
 import {BotClient} from "../../lib/discord/Client";
+import {logger} from "../../lib/services/logger";
 
 export default class ReportMenu implements IFeature<StringSelectMenuInteraction> {
   name = 'ReportMenu';
@@ -22,7 +23,11 @@ export default class ReportMenu implements IFeature<StringSelectMenuInteraction>
       new ButtonBuilder()
         .setCustomId('DeclineReport')
         .setLabel('Отклонить')
-        .setStyle(ButtonStyle.Primary)
+        .setStyle(ButtonStyle.Primary),
+      new ButtonBuilder()
+        .setCustomId(`DisableReports_${interaction.user.id}`)
+        .setLabel('Отключить репорты пользователю')
+        .setStyle(ButtonStyle.Danger)
     );
 
     const channel = await client.channels.fetch(channelId);
@@ -53,5 +58,7 @@ export default class ReportMenu implements IFeature<StringSelectMenuInteraction>
       ephemeral: true,
       content: 'Жалоба успешно отправлена!'
     });
+
+    logger.info(`${interaction.user.id} | ${interaction.user.username} reported ${id} | ${interaction.values[0]}`);
   }
 }

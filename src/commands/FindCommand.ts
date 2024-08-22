@@ -9,6 +9,7 @@ export default class FindCommand implements ICommand {
 
   async run({interaction, client}: { interaction: CommandInteraction, client: BotClient }) {
     let form = await client.userUsecase.getRandomForm(interaction.user.id);
+    const user = await client.userUsecase.findByUserId(interaction.user.id);
     
     if (interaction.deferred || interaction.replied) return;
     if(form == undefined){
@@ -43,7 +44,8 @@ export default class FindCommand implements ICommand {
         new ButtonBuilder()
           .setCustomId(`ReportButton_${form?.userId}`)
           .setEmoji('<:ticketIcon:1273559224940494858>')
-          .setStyle(ButtonStyle.Secondary),
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(user?.disabledReports),
       );
     await interaction.reply({embeds: [embed], components: [buttons]});
   }

@@ -46,6 +46,9 @@ class User {
 
   @prop({default: [], type: Types.Array})
   public viewed!: string[];
+
+  @prop({default: false})
+  public disabledReports!: boolean;
 }
 
 export {User};
