@@ -1,6 +1,6 @@
-import {IFeature} from "../lib/discord/Feature";
+import {IFeature} from "../../lib/discord/Feature";
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, StringSelectMenuInteraction} from "discord.js";
-import {BotClient} from "../lib/discord/Client";
+import {BotClient} from "../../lib/discord/Client";
 
 export default class ReportMenu implements IFeature<StringSelectMenuInteraction> {
   name = 'ReportMenu';

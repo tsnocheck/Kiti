@@ -1,6 +1,6 @@
-import {IFeature} from "../lib/discord/Feature";
+import {IFeature} from "../../lib/discord/Feature";
 import {ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder} from 'discord.js';
-import {BotClient} from "../lib/discord/Client";
+import {BotClient} from "../../lib/discord/Client";
 
 export default class DisLikeButton implements IFeature<ButtonInteraction> {
   name = "DisLikeButton";
