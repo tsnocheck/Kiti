@@ -9,17 +9,21 @@ export default class LikeButton implements IFeature<ButtonInteraction> {
   async run({interaction, client}: { interaction: ButtonInteraction, client: BotClient }): Promise<any> {
     let usercases = client.userUsecase;
     if (interaction.deferred || interaction.replied) return;
-    await usercases.like(interaction.user.id, interaction.customId.split('_')[1]).catch(() => {
-    });
+    const userForm = await client.userUsecase.findByUserId(interaction.user.id)
     
-    const member: User = await client.users.fetch(interaction.customId.split('_')[1]) as User;
-    
-    let dmMessage = new EmbedBuilder()
-      .setTitle('Анкета')
-      .setDescription(`**Ты понравился 1 человеку. Хочешь посмотреть кому понравился? Тогда используй команду \`/like\`**`)
-      .setColor('#bbffd3')
-    
-    await member.send({embeds:[dmMessage]})
+    if(!userForm?.shadowBanned){
+      await usercases.like(interaction.user.id, interaction.customId.split('_')[1]).catch(() => {
+      });
+      
+      const member: User = await client.users.fetch(interaction.customId.split('_')[1]) as User;
+      
+      let dmMessage = new EmbedBuilder()
+        .setTitle('Анкета')
+        .setDescription(`**Ты понравился 1 человеку. Хочешь посмотреть кому понравился? Тогда используй команду \`/like\`**`)
+        .setColor('#bbffd3')
+      
+      await member.send({embeds:[dmMessage]})
+    }
     
     let form = await usercases.getRandomForm(interaction.user.id);
     let err = new EmbedBuilder()
@@ -48,7 +52,7 @@ export default class LikeButton implements IFeature<ButtonInteraction> {
           .setEmoji('<:likeIcon:1273558975966744620>')
           .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
-          .setCustomId(`MessageLikeButton_${form?.userId}`)
+          .setCustomId(`LikeMessageButton_${form?.userId}`)
           .setEmoji('<:likeMessageIcon:1273558952235241557>')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(true),
