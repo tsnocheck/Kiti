@@ -11,6 +11,7 @@ import {IPrecondition} from "./Precondition";
 import * as process from "node:process";
 import {UserUsecase} from '../usecases/UserUsecase';
 import {ModeratorUsecase} from "../usecases/ModeratorUsecase";
+import {AdvertUsecase} from "../usecases/AdvertUsecase";
 
 class BotClient extends Client {
   commands: Map<string, ICommand>;
@@ -21,6 +22,7 @@ class BotClient extends Client {
   redis?: RedisClientType;
   userUsecase: UserUsecase;
   moderatorUsecase: ModeratorUsecase;
+  advertUsecase: AdvertUsecase;
 
   constructor() {
     super({
@@ -49,6 +51,7 @@ class BotClient extends Client {
     this.redis = undefined;
     this.userUsecase = new UserUsecase(this);
     this.moderatorUsecase = new ModeratorUsecase(this);
+    this.advertUsecase = new AdvertUsecase();
   }
 
   public async build(token: string) {
