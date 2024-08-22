@@ -5,12 +5,14 @@ services:
       context: .
       dockerfile: Dockerfile
     env_file:
-      - .env
+      - .env.docker
     depends_on:
       - mongo
     networks:
       - bridge
     restart: no
+    volumes:
+      - ./logs:/app/logs
   mongo:
     image: mongo:latest
     container_name: mongo
@@ -32,7 +34,7 @@ services:
     networks:
       - bridge
     env_file:
-      - .env
+      - .env.docker
     environment:
     - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_INITDB_ROOT_USERNAME}
     - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
@@ -44,7 +46,7 @@ services:
     image: redis:latest
     container_name: redis
     env_file:
-      - .env
+      - .env.docker
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     command: >
@@ -72,7 +74,7 @@ services:
       - grafana-data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
     env_file:
-      - .env
+      - .env.docker
     networks:
       - bridge
   prometheus:
