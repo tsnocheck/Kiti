@@ -22,7 +22,7 @@ export default class MessageLikeButton implements IFeature<ButtonInteraction> {
       .setCustomId('message')
       .setLabel("Сообщение пользователю:")
       .setRequired(true)
-      .setPlaceholder('Например: Приветик, красивое фото')
+      .setPlaceholder('Приветик, красивое фото')
       .setStyle(TextInputStyle.Paragraph);
     
     const nameActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(nameInput);

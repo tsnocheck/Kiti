@@ -15,7 +15,7 @@ export default class CreateAppealFormButton implements IFeature<ButtonInteractio
       .setCustomId('appealText')
       .setLabel("Текст апелляции")
       .setRequired(true)
-      .setPlaceholder('Например: Меня забанили по случайности')
+      .setPlaceholder('Меня забанили по случайности')
       .setStyle(TextInputStyle.Paragraph);
 
     const appealActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(appealInput);

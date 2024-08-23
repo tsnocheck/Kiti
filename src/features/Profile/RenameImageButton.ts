@@ -33,8 +33,8 @@ export default class RenameImageModal implements IFeature<ButtonInteraction> {
         .find(attachment => attachment.contentType?.startsWith('image/'))?.url;
       
       if (!imageUrl) return interaction.followUp({content: 'Вы отправили не изображение', ephemeral: true});
-      let urlImgur: void = await imgur(imageUrl);
-      if(urlImgur == undefined) return interaction.followUp({content: 'Не удалось загрузить фото, попробуйте еще раз', ephemeral: true});
+      let urlImgur: string = await imgur(imageUrl);
+      if(!urlImgur) return interaction.followUp({content: 'Не удалось загрузить фото, попробуйте еще раз', ephemeral: true});
       await client.userUsecase.renameImage(interaction.user.id, urlImgur)
       await message.delete();
 
@@ -55,7 +55,7 @@ export default class RenameImageModal implements IFeature<ButtonInteraction> {
         embeds: [
           new EmbedBuilder()
             .setTitle('Анкета')
-            .setDescription('К сожалению время вышло, попробуйте еще раз.')
+            .setDescription('Вы не успели прислать свое фото, попробуйте еще раз.')
             .setColor('#bbffd3')
             .setTimestamp()
         ]

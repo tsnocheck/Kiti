@@ -15,7 +15,9 @@ export default class RenameYearModal implements IFeature<ModalSubmitInteraction>
 
   async run({interaction, client}: { interaction: ModalSubmitInteraction, client: BotClient }): Promise<any> {
     const year = interaction.fields.getTextInputValue('year');
-    await client.userUsecase.renameYear(interaction.user.id, year)
+    const age = Math.min(Math.max(18, isNaN(parseInt(year)) ? 18 : parseInt(year)), 70)
+    
+    await client.userUsecase.renameYear(interaction.user.id, age)
     
     await interaction.deferUpdate()
     await interaction.editReply({

@@ -3,7 +3,7 @@ import {User} from "./User";
 
 export class Messages {
   @prop()
-  message!: string;
+  message?: string;
   
   @prop({ref: () => User})
   from?: Ref<User>;

@@ -32,8 +32,8 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
         .find(attachment => attachment.contentType?.startsWith('image/'))?.url;
 
       if (!imageUrl) return interaction.followUp({content: 'Вы отправили не изображение', ephemeral: true});
-      let urlImgur: void = await imgur(imageUrl);
-      if(urlImgur == undefined) return interaction.followUp({content: 'Не удалось загрузить фото, попробуйте еще раз', ephemeral: true});
+      let urlImgur: string = await imgur(imageUrl);
+      if(!urlImgur) return interaction.followUp({content: 'Не удалось загрузить фото, попробуйте еще раз', ephemeral: true});
       await message.delete();
 
       let ageMin = Math.min(Math.max(18, isNaN(parseInt(age)) ? 18 : parseInt(age)), 70)
@@ -63,7 +63,7 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
         embeds: [
           new EmbedBuilder()
             .setTitle('Анкета')
-            .setDescription('К сожалению время вышло, попробуйте еще раз.')
+            .setDescription('Вы не успели прислать свое фото, попробуйте еще раз.')
             .setColor('#bbffd3')
             .setTimestamp()
         ]

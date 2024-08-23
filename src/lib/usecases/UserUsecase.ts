@@ -17,6 +17,15 @@ export interface CreateFormDto {
   photo?: string;
   findSex?: number;
 }
+export interface RecreateFormDto {
+  userId: string;
+  name: string;
+  sex: string;
+  city: string;
+  age: number;
+  status?: string;
+  photo?: string;
+}
 
 export class UserUsecase {
   private users: Model<User>;
@@ -114,23 +123,21 @@ export class UserUsecase {
       return true
   }
   
-  async recreateForm(userId: string, name: string, sex: string, city: string, year: string, info: string, image: string){
-    const age = Math.min(Math.max(18, isNaN(parseInt(year)) ? 18 : parseInt(year)), 70)
+  async recreateForm(dto: RecreateFormDto){
     return this.users.findOneAndUpdate(
-      {userId: userId},
+      {userId: dto.userId},
       {
-        name: name,
-        sex: sex,
-        city: city,
-        age: age,
-        status: info,
-        image: image
+        name: dto.name,
+        sex: dto.sex,
+        city: dto.city,
+        age: dto.age,
+        status: dto.status,
+        image: dto.photo
       });
   }
   
-  async renameYear(userId: string, year: string){
-    const age = Math.min(Math.max(18, isNaN(parseInt(year)) ? 18 : parseInt(year)), 70)
-    return this.users.findOneAndUpdate({userId: userId}, {year: age});
+  async renameYear(userId: string, year: number){
+    return this.users.findOneAndUpdate({userId: userId}, {year: year});
   }
 
   async report(formId: string): Promise<boolean> {

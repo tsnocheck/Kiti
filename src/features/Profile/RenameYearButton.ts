@@ -22,7 +22,7 @@ export default class RenameYearButton implements IFeature<ButtonInteraction> {
       .setCustomId('year')
       .setLabel("Ваше новый возраст:")
       .setRequired(true)
-      .setPlaceholder('Например: 18')
+      .setPlaceholder('18')
       .setStyle(TextInputStyle.Paragraph);
     
     const nameActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(nameInput);

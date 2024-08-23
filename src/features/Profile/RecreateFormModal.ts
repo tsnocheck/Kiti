@@ -8,10 +8,10 @@ export default class RecreateFormModal implements IFeature<ModalSubmitInteractio
 
   async run({interaction, client}: { interaction: ModalSubmitInteraction, client: BotClient }): Promise<any> {
     const name = interaction.fields.getTextInputValue('name');
-    const age = interaction.fields.getTextInputValue('age');
+    let year = interaction.fields.getTextInputValue('age');
     const city = interaction.fields.getTextInputValue('city');
     const sex = interaction.fields.getTextInputValue('sex');
-    const info = interaction.fields.getTextInputValue('info') || '';
+    const status = interaction.fields.getTextInputValue('info') || '';
 
     let embed = new EmbedBuilder()
       .setTitle('Анкета')
@@ -31,11 +31,15 @@ export default class RecreateFormModal implements IFeature<ModalSubmitInteractio
         .find(attachment => attachment.contentType?.startsWith('image/'))?.url;
 
       if (!imageUrl) return interaction.followUp({content: 'Вы отправили не изображение', ephemeral: true});
-      let urlImgur: void = await imgur(imageUrl);
-      if(urlImgur == undefined) return interaction.followUp({content: 'Не удалось загрузить фото, попробуйте еще раз', ephemeral: true});
+      let photo: string = await imgur(imageUrl);
+      if(!photo) return interaction.followUp({content: 'Не удалось загрузить фото, попробуйте еще раз', ephemeral: true});
       await message.delete();
-
-      await client.userUsecase.recreateForm(interaction.user.id, name, sex, city, age, info, String(urlImgur));
+      
+      const userId = interaction.user.id
+      
+      let age = Number(year)
+      age = Math.min(Math.max(18, isNaN(parseInt(year)) ? 18 : parseInt(year)), 70)
+      await client.userUsecase.recreateForm({userId, name, sex, city, age, status, photo});
       await interaction.editReply({
         embeds: [
           new EmbedBuilder()
@@ -53,7 +57,7 @@ export default class RecreateFormModal implements IFeature<ModalSubmitInteractio
         embeds: [
           new EmbedBuilder()
             .setTitle('Анкета')
-            .setDescription('К сожалению время вышло, попробуйте еще раз.')
+            .setDescription('Вы не успели прислать свое фото, попробуйте еще раз.')
             .setColor('#bbffd3')
             .setTimestamp()
         ]

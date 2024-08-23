@@ -22,7 +22,7 @@ export default class RenameAboutButton implements IFeature<ButtonInteraction> {
       .setCustomId('aboutMe')
       .setLabel("Ваше новое описание:")
       .setRequired(true)
-      .setPlaceholder('Например: Я крутой и харизматичный')
+      .setPlaceholder('Я крутой и харизматичный')
       .setStyle(TextInputStyle.Paragraph);
     
     const nameActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(nameInput);
