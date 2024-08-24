@@ -7,7 +7,7 @@ export default async function uploadImage(
   clientId: string = 'f23df31387ccf2c',
   title: string = 'Simple upload',
   description: string = 'This is a simple image upload in Imgur'
-): Promise<void> {
+): Promise<string> {
   try {
     const response: AxiosResponse = await axios.get(imageUrl, {responseType: 'stream'});
     const imageStream = response.data;
@@ -30,7 +30,7 @@ export default async function uploadImage(
 
     const uploadResponse: AxiosResponse = await axios(config);
     return uploadResponse.data.data.link;
-  } catch (error: any) {
-    return error;
+  } catch {
+    return ''
   }
 }

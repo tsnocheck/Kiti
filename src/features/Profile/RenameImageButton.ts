@@ -1,56 +1,48 @@
-import { error } from 'winston'
-import type {BotClient} from '../lib/discord/Client';
-import {IFeature} from "../lib/discord/Feature";
-import {EmbedBuilder, Message, ModalSubmitInteraction} from 'discord.js';
-import imgur from '../lib/helpers/imgur';
+import type {BotClient} from '../../lib/discord/Client';
+import {IFeature} from "../../lib/discord/Feature";
+import {
+  ActionRowBuilder,
+  ButtonInteraction,
+  EmbedBuilder, Message,
+  ModalBuilder, type ModalSubmitInteraction,
+  TextInputBuilder,
+  TextInputStyle,
+  type User
+} from 'discord.js'
+import imgur from '../../lib/helpers/imgur'
 
-export default class CreateFormModal implements IFeature<ModalSubmitInteraction> {
-  name = "CreateFormModal";
+export default class RenameImageModal implements IFeature<ButtonInteraction> {
+  name = "RenameImage";
 
-  async run({interaction, client}: { interaction: ModalSubmitInteraction, client: BotClient }): Promise<any> {
-    const name = interaction.fields.getTextInputValue('name');
-    let age = interaction.fields.getTextInputValue('age');
-    const city = interaction.fields.getTextInputValue('city');
-    const sex = interaction.fields.getTextInputValue('sex');
-    const info = interaction.fields.getTextInputValue('info') || '';
-
+  async run({interaction, client}: { interaction: ButtonInteraction, client: BotClient }): Promise<any> {
     let embed = new EmbedBuilder()
       .setTitle('Анкета')
       .setDescription('Отправьте в чат ваше фото')
       .setFooter({text: 'У вас есть на это 2 минуты'})
       .setColor('#bbffd3');
-
+    
     await interaction.deferUpdate();
     await interaction.editReply({embeds: [embed], components: []});
-
+    
     const filter = (msg: Message) => msg.author.id === interaction.user.id;
-
+    
     let collector = interaction.channel?.createMessageCollector({filter});
     collector?.on('collect', async (message: Message) => {
       let msg = await message.fetch();
       const imageUrl: string | undefined = msg.attachments
         .find(attachment => attachment.contentType?.startsWith('image/'))?.url;
-
+      
       if (!imageUrl) return interaction.followUp({content: 'Вы отправили не изображение', ephemeral: true});
       let urlImgur: string = await imgur(imageUrl);
       if(!urlImgur) return interaction.followUp({content: 'Не удалось загрузить фото, попробуйте еще раз', ephemeral: true});
+      await client.userUsecase.renameImage(interaction.user.id, urlImgur)
       await message.delete();
 
-      let ageMin = Math.min(Math.max(18, isNaN(parseInt(age)) ? 18 : parseInt(age)), 70)
-      await client.userUsecase.createForm({
-        userId: interaction.user.id,
-        name: name,
-        sex: sex,
-        city: city,
-        age: ageMin,
-        status: info,
-        photo: String(urlImgur)
-      });
       await interaction.editReply({
         embeds: [
           new EmbedBuilder()
             .setTitle('Анкета')
-            .setDescription('Вы успешно создали анкету, для поиска введите команду /find')
+            .setDescription('Вы успешно изменили вашу фотографию.')
             .setColor('#bbffd3')
             .setTimestamp()
         ]

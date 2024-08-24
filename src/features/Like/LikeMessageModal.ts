@@ -1,19 +1,28 @@
 import {IFeature} from "../../lib/discord/Feature";
-import {ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, type User} from 'discord.js';
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonInteraction,
+  ButtonStyle,
+  EmbedBuilder,
+  ModalBuilder, type ModalSubmitInteraction, TextInputBuilder, TextInputStyle,
+  type User
+} from 'discord.js'
 import {BotClient} from "../../lib/discord/Client";
 
-export default class LikeButton implements IFeature<ButtonInteraction> {
-  name = "LikeButton";
-  preconditions = ['AuthorPrecondition'];
+export default class LikeMessageModal implements IFeature<ModalSubmitInteraction> {
+  name = "LikeMessageModal";
 
-  async run({interaction, client}: { interaction: ButtonInteraction, client: BotClient }): Promise<any> {
+  async run({interaction, client}: { interaction: ModalSubmitInteraction, client: BotClient }): Promise<any> {
+    const message = interaction.fields.getTextInputValue('message');
+    await interaction.deferUpdate()
+    
     let usercases = client.userUsecase;
     if (interaction.deferred || interaction.replied) return;
     const userForm = await client.userUsecase.findByUserId(interaction.user.id)
     
     if(!userForm?.shadowBanned){
-      await usercases.like(interaction.user.id, interaction.customId.split('_')[1]).catch(() => {
-      });
+      await usercases.likeMessage(interaction.user.id, interaction.customId.split('_')[1], message).catch(() => {});
       
       const member: User = await client.users.fetch(interaction.customId.split('_')[1]) as User;
       
@@ -32,7 +41,7 @@ export default class LikeButton implements IFeature<ButtonInteraction> {
       .setColor('#bbffd3')
     
     if(!form){
-      await interaction.update({embeds:[err], components:[]})
+      await interaction.editReply({embeds:[err], components:[]})
       return
     }
     
@@ -44,7 +53,7 @@ export default class LikeButton implements IFeature<ButtonInteraction> {
       `)
       .setColor('#bbffd3')
       .setImage(form?.photo || null);
-
+    
     const buttons = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
         new ButtonBuilder()
@@ -65,7 +74,7 @@ export default class LikeButton implements IFeature<ButtonInteraction> {
           .setEmoji('<:ticketIcon:1273559224940494858>')
           .setStyle(ButtonStyle.Secondary),
       );
-    await interaction.update({embeds: [embed], components: [buttons]}).catch(() => {  });
-    await interaction.followUp({content: 'Вы успешно лайкнули анкету', ephemeral: true}).catch(() => {  });
+    await interaction.editReply({embeds: [embed], components: [buttons]}).catch(() => {  });
+    await interaction.followUp({content: 'Вы успешно лайкнули анкету', ephemeral: true}).catch(() => {})
   }
 }

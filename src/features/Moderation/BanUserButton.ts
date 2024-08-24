@@ -14,7 +14,7 @@ export default class BanButton implements IFeature<ButtonInteraction> {
           .setCustomId('reason')
           .setLabel('Причина')
           .setStyle(TextInputStyle.Short)
-          .setPlaceholder('Например: Нецензурная лексика')
+          .setPlaceholder('Нецензурная лексика')
           .setRequired(true)
       );
 

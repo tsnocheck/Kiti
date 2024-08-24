@@ -1,18 +1,17 @@
-import { error } from 'winston'
-import type {BotClient} from '../lib/discord/Client';
-import {IFeature} from "../lib/discord/Feature";
+import type {BotClient} from '../../lib/discord/Client';
+import {IFeature} from "../../lib/discord/Feature";
 import {EmbedBuilder, Message, ModalSubmitInteraction} from 'discord.js';
-import imgur from '../lib/helpers/imgur';
+import imgur from '../../lib/helpers/imgur';
 
-export default class CreateFormModal implements IFeature<ModalSubmitInteraction> {
-  name = "CreateFormModal";
+export default class RecreateFormModal implements IFeature<ModalSubmitInteraction> {
+  name = "RecreateFormModal";
 
   async run({interaction, client}: { interaction: ModalSubmitInteraction, client: BotClient }): Promise<any> {
     const name = interaction.fields.getTextInputValue('name');
-    let age = interaction.fields.getTextInputValue('age');
+    let year = interaction.fields.getTextInputValue('age');
     const city = interaction.fields.getTextInputValue('city');
     const sex = interaction.fields.getTextInputValue('sex');
-    const info = interaction.fields.getTextInputValue('info') || '';
+    const status = interaction.fields.getTextInputValue('info') || '';
 
     let embed = new EmbedBuilder()
       .setTitle('Анкета')
@@ -32,25 +31,20 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
         .find(attachment => attachment.contentType?.startsWith('image/'))?.url;
 
       if (!imageUrl) return interaction.followUp({content: 'Вы отправили не изображение', ephemeral: true});
-      let urlImgur: string = await imgur(imageUrl);
-      if(!urlImgur) return interaction.followUp({content: 'Не удалось загрузить фото, попробуйте еще раз', ephemeral: true});
+      let photo: string = await imgur(imageUrl);
+      if(!photo) return interaction.followUp({content: 'Не удалось загрузить фото, попробуйте еще раз', ephemeral: true});
       await message.delete();
-
-      let ageMin = Math.min(Math.max(18, isNaN(parseInt(age)) ? 18 : parseInt(age)), 70)
-      await client.userUsecase.createForm({
-        userId: interaction.user.id,
-        name: name,
-        sex: sex,
-        city: city,
-        age: ageMin,
-        status: info,
-        photo: String(urlImgur)
-      });
+      
+      const userId = interaction.user.id
+      
+      let age = Number(year)
+      age = Math.min(Math.max(18, isNaN(parseInt(year)) ? 18 : parseInt(year)), 70)
+      await client.userUsecase.recreateForm({userId, name, sex, city, age, status, photo});
       await interaction.editReply({
         embeds: [
           new EmbedBuilder()
             .setTitle('Анкета')
-            .setDescription('Вы успешно создали анкету, для поиска введите команду /find')
+            .setDescription('Вы успешно перезаполнили анкету.')
             .setColor('#bbffd3')
             .setTimestamp()
         ]

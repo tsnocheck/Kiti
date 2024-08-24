@@ -3,6 +3,7 @@ import {User} from "../schemas/User";
 import {getModelForClass} from "@typegoose/typegoose";
 import {Nullable} from "../helpers/types";
 import {Likes} from "../schemas/Likes";
+import {Messages} from "../schemas/Messages";
 import {BotClient} from "../discord/Client";
 import {logger} from "../services/logger";
 
@@ -16,15 +17,26 @@ export interface CreateFormDto {
   photo?: string;
   findSex?: number;
 }
+export interface RecreateFormDto {
+  userId: string;
+  name: string;
+  sex: string;
+  city: string;
+  age: number;
+  status?: string;
+  photo?: string;
+}
 
 export class UserUsecase {
   private users: Model<User>;
   private likes: Model<Likes>;
+  private messages: Model<Messages>;
   private client: BotClient;
 
   constructor(client: BotClient) {
     this.users = getModelForClass(User);
     this.likes = getModelForClass(Likes);
+    this.messages = getModelForClass(Messages);
     this.client = client;
   }
 
@@ -90,6 +102,42 @@ export class UserUsecase {
 
   async addViewed(userId: string, viewedId: string) {
     return this.users.findOneAndUpdate({userId: userId}, {$push: {viewed: viewedId}});
+  }
+  
+  async renameAbout(userId: string, text: string){
+    return this.users.findOneAndUpdate({userId: userId}, {status: text});
+  }
+  
+  async renameImage(userId: string, image: string){
+    return this.users.findOneAndUpdate({userId: userId}, {image: image});
+  }
+  
+  async likeMessage(userId: string, likedUser: string, message: string): Promise<boolean> {
+    let user = await this.findByUserId(userId)
+    let likedUserObj = await this.findByUserId(likedUser)
+      await this.messages.create({
+        to: user?._id,
+        from: likedUserObj?._id,
+        message: message
+      });
+      return true
+  }
+  
+  async recreateForm(dto: RecreateFormDto){
+    return this.users.findOneAndUpdate(
+      {userId: dto.userId},
+      {
+        name: dto.name,
+        sex: dto.sex,
+        city: dto.city,
+        age: dto.age,
+        status: dto.status,
+        image: dto.photo
+      });
+  }
+  
+  async renameYear(userId: string, year: number){
+    return this.users.findOneAndUpdate({userId: userId}, {year: year});
   }
 
   async report(formId: string): Promise<boolean> {

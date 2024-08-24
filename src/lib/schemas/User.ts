@@ -11,9 +11,6 @@ class User {
   @prop({required: true})
   public userId!: string;
 
-  @prop({default: false})
-  public userAgreement!: boolean;
-
   @prop({required: true})
   public name!: string;
 
