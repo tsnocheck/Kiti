@@ -54,8 +54,7 @@ export default class LikeButton implements IFeature<ButtonInteraction> {
         new ButtonBuilder()
           .setCustomId(`MessageLikeButton_${form?.userId}`)
           .setEmoji('<:likeMessageIcon:1273558952235241557>')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(true),
+          .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
           .setCustomId(`DisLikeButton_${form?.userId}`)
           .setEmoji('<:dislikeIcon:1273559004014055497>')
@@ -66,6 +65,5 @@ export default class LikeButton implements IFeature<ButtonInteraction> {
           .setStyle(ButtonStyle.Secondary),
       );
     await interaction.update({embeds: [embed], components: [buttons]}).catch(() => {  });
-    await interaction.followUp({content: 'Вы успешно лайкнули анкету', ephemeral: true}).catch(() => {  });
   }
 }

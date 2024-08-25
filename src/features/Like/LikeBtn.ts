@@ -58,7 +58,7 @@ export default class LikeBtn implements IFeature<ButtonInteraction> {
       });
     }else{
       let likedToForm = await client.userUsecase.getFormForObjectId(authorLikes?.likedBy[0]._id);
-      
+      const message = await client.userUsecase.getMessage(interaction.user.id, likedToForm!.userId);
       let embed = new EmbedBuilder()
         .setTitle('Анкета')
         .setDescription(`
@@ -66,6 +66,8 @@ export default class LikeBtn implements IFeature<ButtonInteraction> {
       
         ${likedToForm?.name}, ${likedToForm?.age}, ${likedToForm?.city}
         ${likedToForm?.status}
+        
+        ${message ? message : ''}
       `)
         .setColor('#bbffd3')
         .setImage(likedToForm?.photo || null);

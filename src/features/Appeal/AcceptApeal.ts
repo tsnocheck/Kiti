@@ -6,7 +6,7 @@ export default class AcceptAppeal implements IFeature<ButtonInteraction> {
   name = "AcceptAppeal";
 
   async run({interaction, client}: { interaction: ButtonInteraction, client: BotClient }): Promise<any> {
-    await client.userUsecase.unbannedUser(interaction.customId.split('_')[1]);
+    await client.moderatorUsecase.unban(interaction.customId.split('_')[1]);
     const member: User = await client.users.fetch(interaction.customId.split('_')[1]) as User;
 
     await interaction.update({content: 'Пользователь разбанен', components: []});

@@ -18,7 +18,7 @@ export default class DislikeBtn implements IFeature<ButtonInteraction> {
       });
     }else{
       const likedToForm = await client.userUsecase.getFormForObjectId(likes?.likedBy[0]._id);
-      
+      const message = await client.userUsecase.getMessage(interaction.user.id, likedToForm!.userId);
       const embed = new EmbedBuilder()
         .setTitle('Анкета')
         .setDescription(`
@@ -26,6 +26,8 @@ export default class DislikeBtn implements IFeature<ButtonInteraction> {
       
         ${likedToForm?.name}, ${likedToForm?.age}, ${likedToForm?.city}
         ${likedToForm?.status}
+        
+        ${message ? message : ''}
       `)
         .setColor('#bbffd3')
         .setImage(likedToForm?.photo || null);

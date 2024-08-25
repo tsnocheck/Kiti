@@ -2,12 +2,11 @@ import {IFeature} from "../../lib/discord/Feature";
 import {
   ActionRowBuilder,
   ButtonBuilder,
-  ButtonInteraction,
   ButtonStyle,
   EmbedBuilder,
-  ModalBuilder, type ModalSubmitInteraction, TextInputBuilder, TextInputStyle,
+  type ModalSubmitInteraction,
   type User
-} from 'discord.js'
+} from 'discord.js';
 import {BotClient} from "../../lib/discord/Client";
 
 export default class LikeMessageModal implements IFeature<ModalSubmitInteraction> {
@@ -15,14 +14,12 @@ export default class LikeMessageModal implements IFeature<ModalSubmitInteraction
 
   async run({interaction, client}: { interaction: ModalSubmitInteraction, client: BotClient }): Promise<any> {
     const message = interaction.fields.getTextInputValue('message');
-    await interaction.deferUpdate()
-    
-    let usercases = client.userUsecase;
-    if (interaction.deferred || interaction.replied) return;
+    await interaction.deferReply();
     const userForm = await client.userUsecase.findByUserId(interaction.user.id)
     
     if(!userForm?.shadowBanned){
-      await usercases.likeMessage(interaction.user.id, interaction.customId.split('_')[1], message).catch(() => {});
+      await client.userUsecase.like(interaction.user.id, interaction.customId.split('_')[1]);
+      await client.userUsecase.likeMessage(interaction.user.id, interaction.customId.split('_')[1], message);
       
       const member: User = await client.users.fetch(interaction.customId.split('_')[1]) as User;
       
@@ -33,8 +30,8 @@ export default class LikeMessageModal implements IFeature<ModalSubmitInteraction
       
       await member.send({embeds:[dmMessage]})
     }
-    
-    let form = await usercases.getRandomForm(interaction.user.id);
+
+    let form = await client.userUsecase.getRandomForm(interaction.user.id);
     let err = new EmbedBuilder()
       .setTitle('Анкеты')
       .setDescription('К сожалению активные анкеты кончились. Попробуйте позже.')
@@ -63,8 +60,7 @@ export default class LikeMessageModal implements IFeature<ModalSubmitInteraction
         new ButtonBuilder()
           .setCustomId(`MessageLikeButton_${form?.userId}`)
           .setEmoji('<:likeMessageIcon:1273558952235241557>')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(true),
+          .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
           .setCustomId(`DisLikeButton_${form?.userId}`)
           .setEmoji('<:dislikeIcon:1273559004014055497>')
@@ -75,6 +71,5 @@ export default class LikeMessageModal implements IFeature<ModalSubmitInteraction
           .setStyle(ButtonStyle.Secondary),
       );
     await interaction.editReply({embeds: [embed], components: [buttons]}).catch(() => {  });
-    await interaction.followUp({content: 'Вы успешно лайкнули анкету', ephemeral: true}).catch(() => {})
   }
 }

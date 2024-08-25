@@ -18,6 +18,7 @@ export default class FindCommand implements ICommand {
     }
 
     let form = await client.userUsecase.getFormForObjectId(likesForm.likedBy[0]._id);
+    const message = await client.userUsecase.getMessage(interaction.user.id, form!.userId);
     let embed = new EmbedBuilder()
       .setTitle('Анкета')
       .setDescription(`
@@ -25,6 +26,8 @@ export default class FindCommand implements ICommand {
       
         ${form?.name}, ${form?.age}, ${form?.city}
         ${form?.status}
+        
+        ${message ? message : ''}
       `)
       .setColor('#bbffd3')
       .setImage(form?.photo || null);

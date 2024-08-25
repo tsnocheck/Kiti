@@ -17,6 +17,7 @@ export interface CreateFormDto {
   photo?: string;
   findSex?: number;
 }
+
 export interface RecreateFormDto {
   userId: string;
   name: string;
@@ -50,18 +51,7 @@ export class UserUsecase {
     return this.users.findOne({userId: userId}).exec();
   }
 
-  async unbannedUser(userId: string) {
-    await this.likes.findOneAndUpdate({userId}, {banned: false}, {new: true, upsert: true});
-    return true;
-  }
-
-
   async getRandomForm(userId: string) {
-    const count = await this.users.countDocuments({
-      banned: {$ne: true},
-      shadowBanned: {$ne: true},
-      userId: {$ne: userId}
-    });
     const user = await this.findByUserId(userId);
 
     const form = await this.users
@@ -103,12 +93,12 @@ export class UserUsecase {
   async addViewed(userId: string, viewedId: string) {
     return this.users.findOneAndUpdate({userId: userId}, {$push: {viewed: viewedId}});
   }
-  
-  async renameAbout(userId: string, text: string){
+
+  async renameAbout(userId: string, text: string) {
     return this.users.findOneAndUpdate({userId: userId}, {status: text});
   }
-  
-  async renameImage(userId: string, image: string){
+
+  async renameImage(userId: string, image: string) {
     console.log(image)
     return this.users.findOneAndUpdate(
       { userId: userId },
@@ -116,19 +106,26 @@ export class UserUsecase {
       { new: true }
     );
   }
-  
-  async likeMessage(userId: string, likedUser: string, message: string): Promise<boolean> {
-    let user = await this.findByUserId(userId)
-    let likedUserObj = await this.findByUserId(likedUser)
-      await this.messages.create({
-        to: user?._id,
-        from: likedUserObj?._id,
-        message: message
-      });
-      return true
+
+  async likeMessage(userId: string, likedUserId: string, message: string): Promise<boolean> {
+    let user = await this.findByUserId(userId);
+    let likedUserObj = await this.findByUserId(likedUserId);
+    await this.messages.create({
+      to: user?._id,
+      from: likedUserObj?._id,
+      message: message
+    });
+    return true;
   }
-  
-  async recreateForm(dto: RecreateFormDto){
+
+  async getMessage(userId: string, likedUserId: string) {
+    let user = await this.findByUserId(userId);
+    let likedUser = await this.findByUserId(likedUserId);
+
+    return this.messages.findOne({from: likedUser?._id, to: user?.id}).exec();
+  }
+
+  async recreateForm(dto: RecreateFormDto) {
     return this.users.findOneAndUpdate(
       {userId: dto.userId},
       {
@@ -140,12 +137,8 @@ export class UserUsecase {
         image: dto.photo
       });
   }
-  
-  async renameYear(userId: string, year: number){
-    return this.users.findOneAndUpdate({userId: userId}, {year: year});
-  }
 
-  async report(formId: string): Promise<boolean> {
-    return true;
+  async renameYear(userId: string, year: number) {
+    return this.users.findOneAndUpdate({userId: userId}, {year: year});
   }
 }
