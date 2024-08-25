@@ -118,11 +118,19 @@ export class UserUsecase {
     return true;
   }
 
+  async cleanMessages(userId: string, likedUserId: string) {
+    let user = await this.findByUserId(userId);
+    let likedUser = await this.findByUserId(likedUserId);
+    await this.messages.deleteMany({to: likedUser?._id, from: user?._id}).exec();
+  }
+
   async getMessage(userId: string, likedUserId: string) {
     let user = await this.findByUserId(userId);
     let likedUser = await this.findByUserId(likedUserId);
 
-    return this.messages.findOne({from: likedUser?._id, to: user?.id}).exec();
+    const doc = await this.messages.findOne({to: likedUser?._id, from: user?.id}).exec();
+
+    return doc?.message;
   }
 
   async recreateForm(dto: RecreateFormDto) {

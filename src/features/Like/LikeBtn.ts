@@ -10,6 +10,8 @@ export default class LikeBtn implements IFeature<ButtonInteraction> {
     let author = await client.userUsecase.findByUserId(interaction.user.id);
 
     const member: User = await client.users.fetch(interaction.customId.split('_')[1]) as User;
+
+    await client.userUsecase.cleanMessages(interaction.user.id, interaction.customId.split('_')[1]);
     
     let emb = new EmbedBuilder()
       .setTitle('Анкета')

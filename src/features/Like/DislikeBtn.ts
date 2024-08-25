@@ -7,11 +7,12 @@ export default class DislikeBtn implements IFeature<ButtonInteraction> {
 
   async run({interaction, client}: { interaction: ButtonInteraction, client: BotClient }): Promise<any> {
     const likesForm = await client.userUsecase.findByUserId(interaction.customId.split('_')[1]);
-
     const likes = await client.userUsecase.deleteLikedByForm(likesForm!.userId, interaction.user.id);
 
+    await client.userUsecase.cleanMessages(interaction.user.id, interaction.customId.split('_')[1]);
+
     if (!likes?.likedBy || likes.likedBy.length === 0) {
-      await interaction.followUp({
+      await interaction.update({
         components: [],
         content: 'К сожалению анкеты кончились, попробуйте позже',
         embeds: []
