@@ -26,7 +26,7 @@ export default class RenameYearModal implements IFeature<ModalSubmitInteraction>
           .setTitle('Анкета')
           .setDescription('Вы успешно обновили ваш возраст.')
           .setColor('#bbffd3')
-      ]
+      ], components:[]
     })
   }
 }

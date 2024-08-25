@@ -47,7 +47,7 @@ export default class RecreateFormModal implements IFeature<ModalSubmitInteractio
             .setDescription('Вы успешно перезаполнили анкету.')
             .setColor('#bbffd3')
             .setTimestamp()
-        ]
+        ], components:[]
       });
       collector.stop('stop');
     });

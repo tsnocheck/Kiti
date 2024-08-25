@@ -109,7 +109,12 @@ export class UserUsecase {
   }
   
   async renameImage(userId: string, image: string){
-    return this.users.findOneAndUpdate({userId: userId}, {image: image});
+    console.log(image)
+    return this.users.findOneAndUpdate(
+      { userId: userId },
+      { photo: image },
+      { new: true }
+    );
   }
   
   async likeMessage(userId: string, likedUser: string, message: string): Promise<boolean> {

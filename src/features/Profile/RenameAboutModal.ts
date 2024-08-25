@@ -24,7 +24,7 @@ export default class RenameAboutModal implements IFeature<ModalSubmitInteraction
           .setTitle('Анкета')
           .setDescription('Вы успешно обновили информацию о себе.')
           .setColor('#bbffd3')
-      ]
+      ], components:[]
     })
   }
 }
