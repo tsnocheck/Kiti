@@ -53,9 +53,15 @@ export class UserUsecase {
 
   async getRandomForm(userId: string) {
     const user = await this.findByUserId(userId);
-
-    const form = await this.users
-      .findOne({banned: {$ne: true}, shadowBanned: {$ne: true}, userId: {$nin: user?.viewed, $ne: userId}})
+    const count = await this.users.countDocuments({
+      banned: {$ne: true},
+      shadowBanned: {$ne: true},
+      userId: {$nin: user?.viewed, $ne: userId}
+    }).exec();
+    const random = Math.floor(Math.random() * count);
+    const [form] = await this.users
+      .find({banned: {$ne: true}, shadowBanned: {$ne: true}, userId: {$nin: user?.viewed, $ne: userId}})
+      .skip(random)
       .exec();
 
     await user?.updateOne({$push: {viewed: form?.userId}});
