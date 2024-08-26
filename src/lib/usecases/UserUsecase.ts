@@ -124,7 +124,7 @@ export class UserUsecase {
     return true;
   }
 
-  async cleanMessages(userId: string, likedUserId: string) {
+  async cleanUserMessages(userId: string, likedUserId: string) {
     let user = await this.findByUserId(userId);
     let likedUser = await this.findByUserId(likedUserId);
     await this.messages.deleteMany({to: likedUser?._id, from: user?._id}).exec();
@@ -154,5 +154,20 @@ export class UserUsecase {
 
   async renameYear(userId: string, year: number) {
     return this.users.findOneAndUpdate({userId: userId}, {year: year});
+  }
+
+  async clearViewed() {
+    logger.info('Clearing viewed in users model');
+    await this.users.updateMany({}, {$set: {viewed: []}}).exec();
+  }
+
+  async cleanLikes() {
+    logger.info('Clearing liked in likes model.');
+    await this.likes.updateMany({}, {$set: {likedTo: [], likedBy: []}}).exec();
+  }
+
+  async cleanMessages() {
+    logger.info('Clearing messages in messages model.');
+    await this.messages.deleteMany({}).exec();
   }
 }

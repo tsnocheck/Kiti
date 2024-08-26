@@ -12,6 +12,7 @@ import * as process from "node:process";
 import {UserUsecase} from '../usecases/UserUsecase';
 import {ModeratorUsecase} from "../usecases/ModeratorUsecase";
 import {AdvertUsecase} from "../usecases/AdvertUsecase";
+import runCrons from "../crons/runCrons";
 
 class BotClient extends Client {
   commands: Map<string, ICommand>;
@@ -101,6 +102,13 @@ class BotClient extends Client {
       await this.__loadCommands(process.env.MODE!);
     } catch (e) {
       logger.error('Failed to load commands to Discord API: ' + e);
+    }
+
+    try {
+      logger.info('Running cron jobs...');
+      runCrons(this.userUsecase);
+    } catch (e) {
+      logger.error('Failed to run cron jobs: ' + e);
     }
   }
 
