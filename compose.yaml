@@ -116,7 +116,7 @@ services:
     networks:
       - bridge
   cadvisor:
-    image: google/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor
     container_name: monitoring_cadvisor
     restart: unless-stopped
     volumes:
