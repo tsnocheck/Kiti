@@ -53,23 +53,26 @@ export default class DisLikeButton implements IFeature<ButtonInteraction> {
     if (random === 1) {
       const advert = await client.advertUsecase.getRandomAdvert();
 
-      const advertEmbed = new EmbedBuilder()
-        .setTitle(advert.name)
-        .setDescription(advert.text);
+      if (advert) {
 
-      const advertButtons = new ActionRowBuilder<ButtonBuilder>()
-        .addComponents(
-          new ButtonBuilder()
-            .setURL(advert.link)
-            .setLabel(advert.button)
-            .setStyle(ButtonStyle.Link),
-        );
+        const advertEmbed = new EmbedBuilder()
+          .setTitle(advert.name)
+          .setDescription(advert.text);
 
-      await interaction.followUp({
-        embeds: [advertEmbed],
-        components: [advertButtons],
-        ephemeral: true
-      });
+        const advertButtons = new ActionRowBuilder<ButtonBuilder>()
+          .addComponents(
+            new ButtonBuilder()
+              .setURL(advert.link)
+              .setLabel(advert.button)
+              .setStyle(ButtonStyle.Link),
+          );
+
+        await interaction.followUp({
+          embeds: [advertEmbed],
+          components: [advertButtons],
+          ephemeral: true
+        });
+      }
     }
   }
 }
