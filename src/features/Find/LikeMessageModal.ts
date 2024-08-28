@@ -8,6 +8,7 @@ import {
   type User
 } from 'discord.js';
 import {BotClient} from "../../lib/discord/Client";
+import {logger} from "../../lib/services/logger";
 
 export default class LikeMessageModal implements IFeature<ModalSubmitInteraction> {
   name = "LikeMessageModal";
@@ -27,8 +28,12 @@ export default class LikeMessageModal implements IFeature<ModalSubmitInteraction
         .setTitle('Анкета')
         .setDescription(`**Ты понравился 1 человеку. Хочешь посмотреть кому понравился? Тогда используй команду \`/like\`**`)
         .setColor('#bbffd3')
-      
-      await member.send({embeds:[dmMessage]})
+
+      try {
+        await member.send({embeds: [dmMessage]});
+      } catch (e) {
+        logger.info("Can't send message to user " + member.username);
+      }
     }
 
     let form = await client.userUsecase.getRandomForm(interaction.user.id);

@@ -1,6 +1,7 @@
 import {IFeature} from "../../lib/discord/Feature";
 import {ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, type User} from 'discord.js';
 import {BotClient} from "../../lib/discord/Client";
+import {logger} from "../../lib/services/logger";
 
 export default class LikeButton implements IFeature<ButtonInteraction> {
   name = "LikeButton";
@@ -21,8 +22,12 @@ export default class LikeButton implements IFeature<ButtonInteraction> {
         .setTitle('Анкета')
         .setDescription(`**Ты понравился 1 человеку. Хочешь посмотреть кому понравился? Тогда используй команду \`/like\`**`)
         .setColor('#bbffd3')
-      
-      await member.send({embeds:[dmMessage]})
+
+      try {
+        await member.send({embeds: [dmMessage]});
+      } catch (e) {
+        logger.info("Can't send message to user " + member.username);
+      }
     }
     
     let form = await usercases.getRandomForm(interaction.user.id);
