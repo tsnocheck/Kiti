@@ -10,7 +10,7 @@ services:
       - mongo
     networks:
       - bridge
-    restart: no
+    restart: unless-stopped
     volumes:
       - ./logs:/app/logs
   mongo:
