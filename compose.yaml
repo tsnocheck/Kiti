@@ -22,8 +22,6 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongodb:/data/db
-    ports:
-      - 27017:27017
     networks:
       - bridge
   mongo-express:
