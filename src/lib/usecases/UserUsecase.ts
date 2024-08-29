@@ -148,7 +148,7 @@ export class UserUsecase {
         city: dto.city,
         age: dto.age,
         status: dto.status,
-        image: dto.photo
+        photo: dto.photo
       });
   }
 

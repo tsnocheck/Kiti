@@ -98,8 +98,8 @@ export default class RecreateFormModal implements IFeature<ModalSubmitInteractio
         .find(attachment => attachment.contentType?.startsWith('image/'))?.url;
 
       if (!imageUrl) return interaction.followUp({content: 'Вы отправили не изображение', ephemeral: true});
-      let photo: string = await imgur(imageUrl);
-      if (!photo) return interaction.followUp({
+      let image: string = await imgur(imageUrl);
+      if (!image) return interaction.followUp({
         content: 'Не удалось загрузить фото, попробуйте еще раз',
         ephemeral: true
       });
@@ -108,7 +108,7 @@ export default class RecreateFormModal implements IFeature<ModalSubmitInteractio
       const userId = interaction.user.id;
 
       let age: number = Math.min(Math.max(18, isNaN(parseInt(year)) ? 18 : parseInt(year)), 70);
-      await client.userUsecase.recreateForm({userId, name, sex, city, age, status, photo});
+      await client.userUsecase.recreateForm({userId, name, sex, city, age, status, photo: image});
       await interaction.editReply({
         embeds: [
           new EmbedBuilder()
