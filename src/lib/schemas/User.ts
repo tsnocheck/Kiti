@@ -1,10 +1,10 @@
 import {prop} from '@typegoose/typegoose';
 import {Types} from "mongoose";
 
-enum Gender {
-  Male = 0,
-  Female = 1,
-  Gay = 2
+export enum Gender {
+  Male = "Male",
+  Female = "Female",
+  All = "All"
 }
 
 class User {
@@ -17,7 +17,7 @@ class User {
   @prop({required: true})
   public city!: string;
 
-  @prop({required: true})
+  @prop({required: true, enum: Gender})
   public sex!: string;
 
   @prop({required: true})

@@ -32,13 +32,6 @@ export default class CreateFormButton implements IFeature<ButtonInteraction> {
       .setPlaceholder('Москва')
       .setStyle(TextInputStyle.Short);
 
-    const sexInput = new TextInputBuilder()
-      .setCustomId('sex')
-      .setLabel("Какой у вас пол?")
-      .setRequired(true)
-      .setPlaceholder('Мужской')
-      .setStyle(TextInputStyle.Short);
-
     const aboutInput = new TextInputBuilder()
       .setCustomId('info')
       .setLabel("Расскажите о себе")
@@ -48,10 +41,9 @@ export default class CreateFormButton implements IFeature<ButtonInteraction> {
     const nameActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(nameInput);
     const ageActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(ageInput);
     const cityActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(cityInput);
-    const sexActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(sexInput);
     const aboutActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(aboutInput);
 
-    modal.addComponents(nameActionRow, ageActionRow, cityActionRow, sexActionRow, aboutActionRow);
+    modal.addComponents(nameActionRow, ageActionRow, cityActionRow, aboutActionRow);
     await interaction.showModal(modal);
   }
 }

@@ -1,5 +1,5 @@
 import {Document, Model, Types} from "mongoose";
-import {User} from "../schemas/User";
+import {Gender, User} from "../schemas/User";
 import {getModelForClass} from "@typegoose/typegoose";
 import {Nullable} from "../helpers/types";
 import {Likes} from "../schemas/Likes";
@@ -10,7 +10,7 @@ import {logger} from "../services/logger";
 export interface CreateFormDto {
   userId: string;
   name: string;
-  sex: string;
+  sex: Gender;
   city: string;
   age: number;
   status?: string;
@@ -21,7 +21,7 @@ export interface CreateFormDto {
 export interface RecreateFormDto {
   userId: string;
   name: string;
-  sex: string;
+  sex: Gender;
   city: string;
   age: number;
   status?: string;
