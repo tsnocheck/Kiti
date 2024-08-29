@@ -103,7 +103,7 @@ export default class RecreateFormModal implements IFeature<ModalSubmitInteractio
         content: 'Не удалось загрузить фото, попробуйте еще раз',
         ephemeral: true
       });
-      await message.delete();
+      // await message.delete();
 
       const userId = interaction.user.id;
 
