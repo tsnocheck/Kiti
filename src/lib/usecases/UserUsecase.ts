@@ -153,7 +153,7 @@ export class UserUsecase {
   }
 
   async renameYear(userId: string, year: number) {
-    return this.users.findOneAndUpdate({userId: userId}, {year: year});
+    return this.users.findOneAndUpdate({userId: userId}, {age: year});
   }
 
   async clearViewed() {
