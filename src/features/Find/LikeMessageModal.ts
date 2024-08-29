@@ -15,7 +15,7 @@ export default class LikeMessageModal implements IFeature<ModalSubmitInteraction
 
   async run({interaction, client}: { interaction: ModalSubmitInteraction, client: BotClient }): Promise<any> {
     const message = interaction.fields.getTextInputValue('message');
-    await interaction.deferReply();
+    await interaction.deferUpdate();
     const userForm = await client.userUsecase.findByUserId(interaction.user.id)
     
     if(!userForm?.shadowBanned){
