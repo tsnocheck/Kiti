@@ -12,6 +12,7 @@ import {
 } from 'discord.js';
 import uploadImage from "../lib/helpers/imgur";
 import {Gender} from "../lib/schemas/User";
+import {logger} from "../lib/services/logger";
 
 export default class CreateFormModal implements IFeature<ModalSubmitInteraction> {
   name = "CreateFormModal";
@@ -88,6 +89,8 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
 
     await interaction.editReply({embeds: [embed], components: []});
 
+    await client.channels.fetch(interaction.channelId!);
+
     const msgFilter = (msg: Message) => msg.author.id === interaction.user.id;
     const imageCollector = interaction.channel?.createMessageCollector({filter: msgFilter});
     imageCollector?.on('collect', async (message: Message) => {
@@ -101,7 +104,12 @@ export default class CreateFormModal implements IFeature<ModalSubmitInteraction>
         content: 'Не удалось загрузить фото, попробуйте еще раз',
         ephemeral: true
       });
-      // await message.delete();
+      try {
+        await message.delete();
+      } catch (e) {
+        logger.info(`Can't delete message in guild ${interaction.guildId}`);
+      }
+
 
       let ageMin = Math.min(Math.max(18, isNaN(parseInt(age)) ? 18 : parseInt(age)), 70);
       await client.userUsecase.createForm({

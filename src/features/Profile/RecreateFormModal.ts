@@ -12,6 +12,7 @@ import {
 } from 'discord.js';
 import imgur from '../../lib/helpers/imgur';
 import {Gender} from "../../lib/schemas/User";
+import {logger} from "../../lib/services/logger";
 
 export default class RecreateFormModal implements IFeature<ModalSubmitInteraction> {
   name = "RecreateFormModal";
@@ -90,8 +91,8 @@ export default class RecreateFormModal implements IFeature<ModalSubmitInteractio
     await interaction.editReply({embeds: [embed], components: []});
 
     const filter = (msg: Message) => msg.author.id === interaction.user.id;
-
-    let collector = interaction.channel?.createMessageCollector({filter});
+    await client.channels.fetch(interaction.channelId!);
+    let collector = interaction.channel!.createMessageCollector({filter});
     collector?.on('collect', async (message: Message) => {
       let msg = await message.fetch();
       const imageUrl: string | undefined = msg.attachments
@@ -103,7 +104,12 @@ export default class RecreateFormModal implements IFeature<ModalSubmitInteractio
         content: 'Не удалось загрузить фото, попробуйте еще раз',
         ephemeral: true
       });
-      // await message.delete();
+      try {
+        await message.delete();
+      } catch (e) {
+        logger.info(`Can't delete message in guild ${interaction.guildId}`);
+      }
+
 
       const userId = interaction.user.id;
 
