@@ -15,9 +15,16 @@ export default class BanUserModal implements IFeature<ModalSubmitInteraction> {
       await client.moderatorUsecase.shadowBan(id, reason);
     }
 
-    await interaction.reply({
-      ephemeral: true,
-      content: 'Пользователь забанен'
-    });
+    await interaction.deferUpdate();
+
+    await interaction.editReply({
+      components:[],
+      content:`${interaction.message?.content}\n Забанил: ${interaction.user.username}`
+    })
+
+    // await interaction.followUp({
+    //   ephemeral: true,
+    //   content: 'Пользователь забанен.'
+    // });
   };
 }
