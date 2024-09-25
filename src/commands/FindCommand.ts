@@ -26,6 +26,15 @@ export default class FindCommand implements ICommand {
       .setColor('#bbffd3')
       .setImage(form?.photo || null);
 
+      let infoEmb = new EmbedBuilder()
+        .setDescription(`
+          <:likeIcon:1273558975966744620> - Лайкнуть пользователя
+          <:likeMessageIcon:1273558952235241557> - Лайкнуть с сообщением
+          <:dislikeIcon:1273559004014055497> - Пропустить анкету
+          <:ticketIcon:1273559224940494858> - Отправить репорт
+        `)
+        .setColor('#bbffd3')
+
     const buttons = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
         new ButtonBuilder()
@@ -46,6 +55,6 @@ export default class FindCommand implements ICommand {
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(user?.disabledReports),
       );
-    await interaction.reply({embeds: [embed], components: [buttons]});
+    await interaction.reply({embeds: [embed, infoEmb], components: [buttons]});
   }
 }

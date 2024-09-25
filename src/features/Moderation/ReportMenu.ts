@@ -48,12 +48,12 @@ export default class ReportMenu implements IFeature<StringSelectMenuInteraction>
 
     if (channel?.isTextBased()) {
       await channel.send({
-        content: `Новый репорт: ${id}\n Причина: ${interaction.component.options.find(i => i.value === interaction.values[0])?.label}\n Подал репорт: <@${interaction.user.id}>`,
+        content: `<@&1273697722574176447>\nНовый репорт: ${id}\nПричина: ${interaction.component.options.find(i => i.value === interaction.values[0])?.label}\nПодал репорт: <@${interaction.user.id}>`,
         components: [row],
         embeds: [embed]
       });
     }
-
+ 
     await interaction.update({
       components: [],
       content: 'Жалоба успешно отправлена!'
